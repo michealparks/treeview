@@ -1,0 +1,16 @@
+body {
+  margin: 0;
+  display: grid;
+  place-content: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+body, input {
+  font-family: monospace;
+}
+
+#app {
+  width: 300px;
+  overflow: auto;
+}
