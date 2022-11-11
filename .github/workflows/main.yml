@@ -28,7 +28,7 @@ jobs:
           CLEAN: true
           clean-exclude: |
             .nojekyll
-  
+
   publish:
     runs-on: ubuntu-latest
 
