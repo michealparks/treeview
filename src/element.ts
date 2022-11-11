@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-import * as pcuiClass from './class'
 import type { Container } from './container'
 import type { EventHandle } from './event-handle'
 import { Events } from './events'
@@ -92,8 +91,6 @@ import { Events } from './events'
 
 interface Args {
   dom?: HTMLElement
-  id?: string
-  class?: string[]
   enabled?: boolean
   isRoot?: boolean
   hidden?: boolean
@@ -105,9 +102,6 @@ interface Args {
  * @classdesc The base class for all UI elements.
  * @augments Events
 
- * @property {boolean} hiddenToRoot Gets whether the Element is hidden all the way up to the root.
- * If the Element itself or any of its parents are hidden then this is true.
- * @property {boolean} ignoreParent Gets / sets whether the Element will ignore parent events & variable states.
  * @property {number} [width=null] Gets / sets the width of the Element in pixels. Can also be an empty string to remove it.
  * @property {number} [height=null] Gets / sets the height of the Element in pixels. Can also be an empty string to remove it.
  * @property {boolean} error Gets / sets whether the Element is in an error state.
@@ -133,27 +127,13 @@ export class Element extends Events {
    * Creates a new Element.
    *
    * @param {object} args - The arguments. All settable properties can also be set through the constructor.
-   * @param {object} [args.dom] - The DOM element that this pcui.Element wraps.
-   * @param {string} [args.id] - The desired id for the Element HTML node.
-   * @param {string[]} [args.class] - The CSS class or classes we want to add to the element.
+   * @param {object} [args.dom] - The DOM element that this Element wraps.
    * @param {boolean} [args.isRoot] - If true then this is the root element. Set this to true for the topmost Element in your page.
    */
   constructor (args: Args = {}) {
     super()
 
     this.dom = args.dom ?? document.createElement('div')
-
-    if (args.id !== undefined) {
-      this.dom.id = args.id
-    }
-
-    // Add ui reference
-
-    // @ts-expect-error @@TODO fix
-    this.dom.ui = this
-
-    this.dom.classList.add('element')
-
     this.#hiddenParents = !args.isRoot
     this.enabled = args.enabled ?? true
     this.hidden = args.hidden ?? false
@@ -168,10 +148,10 @@ export class Element extends Events {
       return
     }
 
-    this.dom.classList.add(pcuiClass.FLASH)
+    this.dom.classList.add('flash')
     this.#flashTimeout = setTimeout(() => {
       this.#flashTimeout = -1
-      this.dom.classList.remove(pcuiClass.FLASH)
+      this.dom.classList.remove('flash')
     }, 200)
   }
 
@@ -184,12 +164,7 @@ export class Element extends Events {
   }
 
   #onEnabledChange (enabled: boolean) {
-    if (enabled) {
-      this.dom.classList.remove(pcuiClass.DISABLED)
-    } else {
-      this.dom.classList.add(pcuiClass.DISABLED)
-    }
-
+    this.dom.classList.toggle('disabled', !enabled)
     this.emit(enabled ? 'enable' : 'disable')
   }
 
@@ -201,6 +176,7 @@ export class Element extends Events {
     if (this.#ignoreParent) {
       return
     }
+
     if (this.#enabled) {
       this.#onEnabledChange(false)
     }
@@ -210,6 +186,7 @@ export class Element extends Events {
     if (this.#ignoreParent) {
       return
     }
+
     if (this.#enabled) {
       this.#onEnabledChange(true)
     }
@@ -232,12 +209,7 @@ export class Element extends Events {
   }
 
   #onReadOnlyChange (readOnly: boolean) {
-    if (readOnly) {
-      this.dom.classList.add(pcuiClass.READONLY)
-    } else {
-      this.dom.classList.remove(pcuiClass.READONLY)
-    }
-
+    this.dom.classList.toggle('readonly', readOnly)
     this.emit('readOnly', readOnly)
   }
 
@@ -304,23 +276,14 @@ export class Element extends Events {
       }
     }
 
-    const { dom } = this
-
-    if (dom) {
-      // Remove ui reference
-
-      // @ts-expect-error @@TODO fix
-      delete dom.ui
-
-      // @ts-expect-error Destroy!
-      this.dom = null
-    }
+    // @ts-expect-error Destroy!
+    this.dom = null
 
     if (this.#flashTimeout > -1) {
       clearTimeout(this.#flashTimeout)
     }
 
-    this.emit('destroy', dom, this)
+    this.emit('destroy', this.dom, this)
 
     this.unbind()
   }
@@ -352,6 +315,9 @@ export class Element extends Events {
     return this.#enabled && (!this.#parent || this.#parent.enabled)
   }
 
+  /**
+   * Gets / sets whether the Element will ignore parent events & variable states.
+   */
   set ignoreParent (value) {
     this.#ignoreParent = value
     this.#onEnabledChange(this.enabled)
@@ -430,11 +396,7 @@ export class Element extends Events {
 
     this.#hidden = value
 
-    if (value) {
-      this.dom.classList.add('hidden')
-    } else {
-      this.dom.classList.remove('hidden')
-    }
+    this.dom.classList.toggle('hidden', value)
 
     this.emit(value ? 'hide' : 'show')
 
@@ -447,6 +409,10 @@ export class Element extends Events {
     return this.#hidden
   }
 
+  /**
+   * Gets whether the Element is hidden all the way up to the root.
+   * If the Element itself or any of its parents are hidden then this is true.
+   */
   get hiddenToRoot (): boolean {
     return this.#hidden || this.#hiddenParents
   }
@@ -477,11 +443,7 @@ export class Element extends Events {
       return
     }
     this.#hasError = value
-    if (value) {
-      this.dom.classList.add(pcuiClass.ERROR)
-    } else {
-      this.dom.classList.remove(pcuiClass.ERROR)
-    }
+    this.dom.classList.toggle('error', value)
   }
 
   get error (): boolean {

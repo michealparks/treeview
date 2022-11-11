@@ -1,13 +1,14 @@
 import './main.css'
-import TreeView from '../src/main.ts'
-import TreeViewItem from '../src/item.ts'
+import { Pane } from 'tweakpane'
+import { TreeView } from '../src/main'
+import { TreeViewItem } from '../src/item'
 
 const treeview = new TreeView()
 treeview.dom.classList.add('sticky', 'top-0')
 treeview.resizable = 'bottom'
 treeview.resizeMax = Infinity
 treeview.dom.style.height = '300px'
-document.querySelector('#app')!.append(treeview.domElement)
+document.body.append(treeview.domElement)
 
 const root = new TreeViewItem({ text: `root` })
 treeview.append(root)
@@ -28,3 +29,24 @@ for (let i = 0; i < 10; i += 1) {
     }
   }
 }
+
+const computedStyle = getComputedStyle(treeview.domElement.shadowRoot!.querySelector('style')!)
+
+const cssVar = (name: string) => {
+  return computedStyle.getPropertyValue(name)
+}
+
+const setCssVar = ({ presetKey, value }) => {
+  document.documentElement.style.setProperty(presetKey, value)
+}
+
+const params = {
+  '--color-resize-handle': cssVar('--color-resize-handle') || '#dddddd',
+  '--color-bg': cssVar('--color-bg') || '#28292E',
+}
+
+const pane = new Pane()
+pane.element.style.width = '350px'
+pane.element.style.transform = 'translateX(-100px)'
+pane.addInput(params, '--color-resize-handle').on('change', setCssVar)
+pane.addInput(params, '--color-bg').on('change', setCssVar)

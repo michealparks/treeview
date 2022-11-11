@@ -4,14 +4,6 @@ import { Label } from './label'
 import { TextInput } from './textinput'
 import type { TreeView } from './main'
 
-const CLASS_ROOT = 'treeview-item'
-const CLASS_ICON = `treeview-item-icon`
-const CLASS_TEXT = `treeview-item-text`
-const CLASS_SELECTED = `treeview-item-selected`
-const CLASS_OPEN = `treeview-item-open`
-const CLASS_EMPTY = `treeview-item-empty`
-const CLASS_RENAME = `treeview-item-rename`
-
 interface Args {
   text: string
   icon?: string
@@ -49,7 +41,7 @@ interface Args {
 /**
  * @name TreeViewItem
  * @class
- * @classdesc Represents a Tree View Item to be added to a pcui.TreeView.
+ * @classdesc Represents a Tree View Item to be added to a TreeView.
  * @mixes IFocusable
 
  * @property {Label} textLabel Gets the internal label that shows the text.
@@ -68,7 +60,7 @@ export class TreeViewItem extends Container {
   allowSelect = true
 
   /**
-   * Whether this tree item can be dragged. Only considered if the parent treeview has allowDrag true.
+   * Whether this tree item can be dragged. Only considered if the parent Treeview has allowDrag true.
    * @default true
    */
   allowDrag = true
@@ -79,62 +71,55 @@ export class TreeViewItem extends Container {
    */
   allowDrop = true
 
-  // Used the the parent treeview
+  // Used the the parent Treeview
   treeOrder = -1
   treeView: TreeView | undefined
 
-  #numChildren = 0
   containerContents: Container
   #labelIcon: Label
   #labelText: Label
   #open = false
   #icon = ''
 
+  items: TreeViewItem[] = []
+
   /**
    * Creates a new TreeViewItem.
    */
   constructor (args: Args) {
-    super({ flex: true, ...args })
+    super()
 
-    this.dom.classList.add(CLASS_ROOT, CLASS_EMPTY, 'relative', 'pl-8', 'h-[20px]')
+    this.dom.className = 'tv-item tv-item-empty relative pl-8 h-[20px]'
 
     this.containerContents = new Container()
-    this.containerContents.dom.classList.add(
-      'treeview-item-contents',
-      'relative',
-      'flex',
-      'flex-row',
-      'items-center',
-      'h-6'
-    )
-
+    this.containerContents.dom.className = 'tv-item-contents relative flex flex-row items-center h-6'
     this.containerContents.dom.tabIndex = 0
     this.append(this.containerContents)
 
     this.containerContents.dom.draggable = true
 
     this.#labelIcon = new Label()
-    this.#labelIcon.dom.classList.add(CLASS_ICON)
+    this.#labelIcon.dom.classList.add('tv-item-icon')
     this.containerContents.append(this.#labelIcon)
 
     this.icon = args.icon ?? ''
 
     this.#labelText = new Label()
-    this.#labelText.dom.classList.add(CLASS_TEXT)
+    this.#labelText.dom.classList.add('tv-item-text', 'relative', 'z-1', 'shrink-0', 'm-0')
     this.containerContents.append(this.#labelText)
 
     this.text = args.text
     this.selected = args.selected ?? false
 
-    this.containerContents.dom.addEventListener('focus', this._onContentFocus)
-    this.containerContents.dom.addEventListener('blur', this._onContentBlur)
-    this.containerContents.dom.addEventListener('keydown', this._onContentKeyDown)
-    this.containerContents.dom.addEventListener('dragstart', this._onContentDragStart)
-    this.containerContents.dom.addEventListener('mousedown', this._onContentMouseDown)
-    this.containerContents.dom.addEventListener('mouseover', this._onContentMouseOver)
-    this.containerContents.dom.addEventListener('click', this._onContentClick)
-    this.containerContents.dom.addEventListener('dblclick', this._onContentDblClick)
-    this.containerContents.dom.addEventListener('contextmenu', this._onContentContextMenu)
+    this.containerContents.dom.addEventListener('focus', this.#onContentFocus)
+    this.containerContents.dom.addEventListener('blur', this.#onContentBlur)
+    this.containerContents.dom.addEventListener('keydown', this.#onContentKeyDown)
+    this.containerContents.dom.addEventListener('dragstart', this.#onContentDragStart)
+    this.containerContents.dom.addEventListener('mousedown', this.#onContentMouseDown)
+    this.containerContents.dom.addEventListener('mouseover', this.#onContentMouseOver)
+    this.containerContents.dom.addEventListener('click', this.#onContentClick)
+    this.containerContents.dom.addEventListener('dblclick', this.#onContentDblClick)
+    this.containerContents.dom.addEventListener('contextmenu', this.#onContentContextMenu)
   }
 
   override _onAppendChild (element: TreeViewItem) {
@@ -144,10 +129,10 @@ export class TreeViewItem extends Container {
       return
     }
 
-    this.#numChildren += 1
-  
+    this.items.push(element)
+
     if (this.parent !== this.treeView) {
-      this.dom.classList.remove(CLASS_EMPTY)
+      this.dom.classList.remove('tv-item-empty')
     }
 
     this.treeView?._onAppendTreeViewItem(element)
@@ -155,18 +140,18 @@ export class TreeViewItem extends Container {
 
   override _onRemoveChild (element: TreeViewItem) {
     if (element instanceof TreeViewItem) {
-      this.#numChildren -= 1
-      if (this.#numChildren === 0) {
-        this.dom.classList.add(CLASS_EMPTY)
-      }
-
+      this.items.splice(this.items.indexOf(element), 1)
       this.treeView?._onRemoveTreeViewItem(element)
+
+      if (this.items.length === 0) {
+        this.dom.classList.add('tv-item-empty')
+      }
     }
 
     super._onRemoveChild(element)
   }
 
-  _onContentKeyDown = (event: KeyboardEvent) => {
+  #onContentKeyDown = (event: KeyboardEvent) => {
     if (
       (event.target as HTMLElement).tagName.toLowerCase() === 'input' ||
       !this.allowSelect
@@ -177,7 +162,7 @@ export class TreeViewItem extends Container {
     this.treeView?._onChildKeyDown(event, this)
   }
 
-  _onContentMouseDown = (event: MouseEvent) => {
+  #onContentMouseDown = (event: MouseEvent) => {
     if (this.treeView === undefined || !this.treeView.allowDrag || !this.allowDrag) {
       return
     }
@@ -186,38 +171,38 @@ export class TreeViewItem extends Container {
     event.stopPropagation()
   }
 
-  _onContentMouseUp = (event: MouseEvent) => {
+  #onContentMouseUp = (event: MouseEvent) => {
     event.stopPropagation()
     event.preventDefault()
 
-    window.removeEventListener('mouseup', this._onContentMouseUp)
+    window.removeEventListener('mouseup', this.#onContentMouseUp)
 
     this.treeView?._onChildDragEnd(event, this)
   }
 
-  _onContentMouseOver = (event: MouseEvent) => {
+  #onContentMouseOver = (event: MouseEvent) => {
     event.stopPropagation()
     this.treeView?._onChildDragOver(event, this)
   }
 
-  _onContentDragStart = (event: MouseEvent) => {
+  #onContentDragStart = (event: MouseEvent) => {
     event.stopPropagation()
     event.preventDefault()
 
     if (
       this.treeView === undefined ||
       !this.treeView.allowDrag ||
-      this.dom.classList.contains(CLASS_RENAME)
+      this.dom.classList.contains('tv-item-rename')
     ) {
       return
     }
 
     this.treeView._onChildDragStart(event, this)
 
-    window.addEventListener('mouseup', this._onContentMouseUp)
+    window.addEventListener('mouseup', this.#onContentMouseUp)
   }
 
-  _onContentClick = (event: MouseEvent) => {
+  #onContentClick = (event: MouseEvent) => {
     if (!this.allowSelect || event.button !== 0) {
       return
     }
@@ -230,7 +215,7 @@ export class TreeViewItem extends Container {
 
     const rect = this.containerContents.dom.getBoundingClientRect()
 
-    if (this.#numChildren > 0 && event.clientX - rect.left < 0) {
+    if (this.children.length > 0 && event.clientX - rect.left < 0) {
       this.open = !this.open
       if (event.altKey) {
         // Apply to all children as well
@@ -256,7 +241,7 @@ export class TreeViewItem extends Container {
     }
   }
 
-  _onContentDblClick = (evt: MouseEvent): void => {
+  #onContentDblClick = (evt: MouseEvent): void => {
     if (!this.treeView || !this.treeView.allowRenaming || evt.button !== 0) {
       return
     }
@@ -269,7 +254,7 @@ export class TreeViewItem extends Container {
 
     evt.stopPropagation()
     const rect = this.containerContents.dom.getBoundingClientRect()
-    if (this.numChildren && evt.clientX - rect.left < 0) {
+    if (this.children.length > 0 && evt.clientX - rect.left < 0) {
       return
     }
 
@@ -281,40 +266,39 @@ export class TreeViewItem extends Container {
     this.rename()
   }
 
-  _onContentContextMenu = (event: MouseEvent) => {
+  #onContentContextMenu = (event: MouseEvent) => {
     this.treeView?.onContextMenu?.(event, this)
   }
 
-  _onContentFocus = (event: FocusEvent) => {
+  #onContentFocus = (event: FocusEvent) => {
     this.emit('focus', event)
   }
 
-  _onContentBlur = (event: FocusEvent) => {
+  #onContentBlur = (event: FocusEvent) => {
     this.emit('blur', event)
   }
 
   rename () {
-    this.dom.classList.add(CLASS_RENAME)
+    this.dom.classList.add('tv-item-rename')
 
     // Show text input to enter new text
     const textInput = new TextInput({
       value: this.text,
     })
 
-    textInput.on('blur', () => {
+    const destroy = () => {
       textInput.destroy()
-    })
-
-    textInput.on('destroy', () => {
-      this.dom.classList.remove(CLASS_RENAME)
+      this.dom.classList.remove('tv-item-rename')
       this.focus()
-    })
+    }
+
+    textInput.dom.addEventListener('blur', destroy)
 
     textInput.on('change', (value: string) => {
       const normalized = value.trim()
-      if (normalized) {
+      if (normalized !== '') {
         this.text = normalized
-        textInput.destroy()
+        destroy()
       }
     })
 
@@ -323,7 +307,7 @@ export class TreeViewItem extends Container {
        * Make sure text input is editable even if this
        * tree item is disabled
        */
-      textInput.input.removeAttribute('readonly')
+      textInput.dom.removeAttribute('readonly')
     })
 
     this.containerContents.append(textInput)
@@ -344,17 +328,17 @@ export class TreeViewItem extends Container {
       return
     }
 
-    this.containerContents.dom.removeEventListener('focus', this._onContentFocus)
-    this.containerContents.dom.removeEventListener('blur', this._onContentBlur)
-    this.containerContents.dom.removeEventListener('keydown', this._onContentKeyDown)
-    this.containerContents.dom.removeEventListener('mousedown', this._onContentMouseDown)
-    this.containerContents.dom.removeEventListener('dragstart', this._onContentDragStart)
-    this.containerContents.dom.removeEventListener('mouseover', this._onContentMouseOver)
-    this.containerContents.dom.removeEventListener('click', this._onContentClick)
-    this.containerContents.dom.removeEventListener('dblclick', this._onContentDblClick)
-    this.containerContents.dom.removeEventListener('contextmenu', this._onContentContextMenu)
+    this.containerContents.dom.removeEventListener('focus', this.#onContentFocus)
+    this.containerContents.dom.removeEventListener('blur', this.#onContentBlur)
+    this.containerContents.dom.removeEventListener('keydown', this.#onContentKeyDown)
+    this.containerContents.dom.removeEventListener('mousedown', this.#onContentMouseDown)
+    this.containerContents.dom.removeEventListener('dragstart', this.#onContentDragStart)
+    this.containerContents.dom.removeEventListener('mouseover', this.#onContentMouseOver)
+    this.containerContents.dom.removeEventListener('click', this.#onContentClick)
+    this.containerContents.dom.removeEventListener('dblclick', this.#onContentDblClick)
+    this.containerContents.dom.removeEventListener('contextmenu', this.#onContentContextMenu)
 
-    window.removeEventListener('mouseup', this._onContentMouseUp)
+    window.removeEventListener('mouseup', this.#onContentMouseUp)
 
     super.destroy()
   }
@@ -371,26 +355,21 @@ export class TreeViewItem extends Container {
       return
     }
 
-    if (value) {
-      this.containerContents.dom.classList.add(CLASS_SELECTED)
-      this.emit('select', this)
-      if (this.treeView) {
-        this.treeView._onChildSelected(this)
-      }
+    this.containerContents.dom.classList.toggle('tv-item-selected', value)
 
+    if (value) {
+      this.emit('select', this)
+      this.treeView?._onChildSelected(this)
       this.focus()
     } else {
-      this.containerContents.dom.classList.remove(CLASS_SELECTED)
       this.blur()
       this.emit('deselect', this)
-      if (this.treeView) {
-        this.treeView._onChildDeselected(this)
-      }
+      this.treeView?._onChildDeselected(this)
     }
   }
 
   get selected (): boolean {
-    return this.containerContents.dom.classList.contains(CLASS_SELECTED)
+    return this.containerContents.dom.classList.contains('tv-item-selected')
   }
 
   /**
@@ -399,9 +378,7 @@ export class TreeViewItem extends Container {
   set text (value: string) {
     if (this.#labelText.text !== value) {
       this.#labelText.text = value
-      if (this.treeView) {
-        this.treeView._onChildRename(this, value)
-      }
+      this.treeView?._onChildRename(this, value)
     }
   }
 
@@ -426,27 +403,17 @@ export class TreeViewItem extends Container {
     }
 
     this.#open = value
-
-    if (value) {
-      this.dom.classList.add(CLASS_OPEN)
-      this.emit('open', this)
-    } else {
-      this.dom.classList.remove(CLASS_OPEN)
-      this.emit('close', this)
-    }
+    this.dom.classList.toggle('tv-item-open', value)
+    this.emit(value ? 'open' : 'close', this)
   }
 
   get open (): boolean {
     return this.#open || this.parent === this.treeView
   }
 
-  get numChildren (): number {
-    return this.#numChildren
-  }
-
   set parentsOpen (value: boolean) {
     let { parent } = this
-    while (parent && parent instanceof TreeViewItem) {
+    while (parent !== null && parent instanceof TreeViewItem) {
       parent.open = value
       parent = parent.parent
     }
@@ -454,7 +421,7 @@ export class TreeViewItem extends Container {
 
   get parentsOpen (): boolean {
     let { parent } = this
-    while (parent && parent instanceof TreeViewItem) {
+    while (parent !== null && parent instanceof TreeViewItem) {
       if (!parent.open) {
         return false
       }
@@ -465,15 +432,13 @@ export class TreeViewItem extends Container {
   }
 
   get firstChild (): TreeViewItem | null {
-    if (this.#numChildren === 0) {
+    if (this.children.length === 0) {
       return null
     }
-
-    for (let i = 0, l = this.dom.childNodes.length; i < l; i += 1) {
-      // @ts-expect-error @TODO Fix
-      if (this.dom.childNodes[i].ui instanceof TreeViewItem) {
-        // @ts-expect-error @TODO Fix
-        return this.dom.childNodes[i].ui
+  
+    for (let i = 0, l = this.children.length; i < l; i += 1) {
+      if (this.children[i] instanceof TreeViewItem) {
+        return this.children[i] as TreeViewItem
       }
     }
 
@@ -481,15 +446,13 @@ export class TreeViewItem extends Container {
   }
 
   get lastChild (): TreeViewItem | null {
-    if (this.#numChildren === 0) {
+    if (this.children.length === 0) {
       return null
     }
 
-    for (let i = this.dom.childNodes.length - 1; i >= 0; i -= 1) {
-      // @ts-expect-error @TODO Fix
-      if (this.dom.childNodes[i].ui instanceof TreeViewItem) {
-        // @ts-expect-error @TODO Fix
-        return this.dom.childNodes[i].ui
+    for (let i = this.children.length - 1; i >= 0; i -= 1) {
+      if (this.children[i] instanceof TreeViewItem) {
+        return this.children[i] as TreeViewItem
       }
     }
 
@@ -497,27 +460,39 @@ export class TreeViewItem extends Container {
   }
 
   get nextSibling (): TreeViewItem | null {
-    let sibling = this.dom.nextSibling
+    const { children } = this.parent as Container
 
-    // @ts-expect-error @TODO Fix
-    while (sibling && !(sibling.ui instanceof TreeViewItem)) {
-      sibling = sibling.nextSibling
+    for (let i = 0, l = children.length; i < l; i += 1) {
+      if (children[i - 1] === this) {
+        while (i < children.length) {
+          if (children[i] instanceof TreeViewItem) {
+            return children[i] as TreeViewItem
+          }
+          i += 1
+        }
+        return null
+      }
     }
 
-    // @ts-expect-error @TODO Fix
-    return sibling?.ui ?? null
+    return null
   }
 
   get previousSibling (): TreeViewItem | null {
-    let sibling = this.dom.previousSibling
+    const { children } = this.parent as Container
 
-    // @ts-expect-error @TODO Fix
-    while (sibling && !(sibling.ui instanceof TreeViewItem)) {
-      sibling = sibling.previousSibling
+    for (let i = children.length - 1; i > -1; i -= 1) {
+      if (children[i + 1] === this) {
+        while (i > -1) {
+          if (children[i] instanceof TreeViewItem) {
+            return children[i] as TreeViewItem
+          }
+          i -= 1
+        }
+        return null
+      }
     }
 
-    // @ts-expect-error @TODO Fix
-    return sibling?.ui ?? null
+    return null
   }
 
   /**
@@ -538,5 +513,3 @@ export class TreeViewItem extends Container {
     return this.#icon
   }
 }
-
-export default TreeViewItem

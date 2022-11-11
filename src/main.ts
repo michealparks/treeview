@@ -2,16 +2,16 @@ import css from './main.css?inline'
 
 /* eslint-disable max-depth */
 /* eslint-disable no-underscore-dangle */
-import { Container } from './container'
+import { Resizable } from './resizable'
+import type { Container } from './container'
 import type { Element } from './element'
 import { TreeViewItem } from './item'
 import { searchItems } from './search'
 
-const CLASS_ROOT = 'treeview'
-const CLASS_DRAGGED_ITEM = `treeview-item-dragged`
-const CLASS_DRAGGED_HANDLE = `treeview-drag-handle`
-const CLASS_FILTERING = `treeview-filtering`
-const CLASS_FILTER_RESULT = `${CLASS_FILTERING}-result`
+const CLASS_DRAGGED_ITEM = `tv-item-dragged`
+const CLASS_DRAGGED_HANDLE = `tv-drag-handle`
+const CLASS_FILTERING = `tv-filtering`
+const CLASS_FILTER_RESULT = `tv-filtering-result`
 
 const DRAG_AREA_INSIDE = 'inside'
 const DRAG_AREA_BEFORE = 'before'
@@ -28,7 +28,7 @@ const getChildIndex = (item: Element, parent: Element) => {
  * @returns The next tree item.
  */
 const findNextVisibleTreeItem = (currentItem: TreeViewItem): TreeViewItem | null => {
-  if (currentItem.numChildren > 0 && currentItem.open) {
+  if (currentItem.children.length > 0 && currentItem.open) {
     return currentItem.firstChild
   }
 
@@ -62,12 +62,12 @@ const findNextVisibleTreeItem = (currentItem: TreeViewItem): TreeViewItem | null
  * @returns The last child item.
  */
 const findLastVisibleChildTreeItem = (currentItem: TreeViewItem): TreeViewItem | null => {
-  if (!currentItem.numChildren || !currentItem.open) {
+  if (currentItem.children.length === 0 || !currentItem.open) {
     return null
   }
 
   let { lastChild } = currentItem
-  while (lastChild?.numChildren && lastChild.open) {
+  while (lastChild !== null && lastChild.children.length > 0 && lastChild.open) {
     lastChild = lastChild.lastChild
   }
 
@@ -82,15 +82,16 @@ const findLastVisibleChildTreeItem = (currentItem: TreeViewItem): TreeViewItem |
  */
 const findPreviousVisibleTreeItem = (currentItem: TreeViewItem): TreeViewItem | null => {
   const sibling = currentItem.previousSibling
+
   if (sibling) {
-    if (sibling.numChildren > 0 && sibling.open) {
+    if (sibling.children.length > 0 && sibling.open) {
       return findLastVisibleChildTreeItem(sibling)
     }
 
     return sibling
   }
 
-  const parent = currentItem.parent
+  const { parent } = currentItem
   if (!(parent instanceof TreeViewItem)) {
     return null
   }
@@ -141,9 +142,9 @@ const findPreviousVisibleTreeItem = (currentItem: TreeViewItem): TreeViewItem | 
  */
 
 /**
- * A container that can show a treeview like a hierarchy. The treeview contains TreeViewItems.
+ * A container that can show a Treeview like a hierarchy. The Treeview contains TreeViewItems.
  */
-export class TreeView extends Container {
+export class TreeView extends Resizable {
   /**
    * Whether reordering TreeViewItems is allowed.
    * @default true
@@ -184,7 +185,7 @@ export class TreeView extends Container {
    * Creates a new TreeView.
    *
    * @param {Element} [args.dragScrollElement] - An element (usually a container of the tree view) that will be scrolled when the user
-   * drags towards the edges of the treeview. Defaults to the TreeView itself.
+   * drags towards the edges of the Treeview. Defaults to the TreeView itself.
    * tree items will not be reparented by the TreeView but instead will rely on the function to reparent them as it sees fit.
    */
   constructor (args = {}) {
@@ -197,22 +198,10 @@ export class TreeView extends Container {
     style.innerHTML = css
     shadowRoot.append(style)
 
-    super({
-      ...args,
-      dom, 
-    })
+    super({ ...args, dom })
 
     this.domElement = host
-
-    this.dom.classList.add(
-      CLASS_ROOT,
-      'z-10',
-      'bg-default-gray',
-      'text-white',
-      'min-w-max',
-      'font-mono',
-      'text-[11px]'
-    )
+    this.dom.className = 'tv relative z-10 bg-default-gray text-white min-w-max font-mono text-[11px]'
 
     this.#dragHandle.className = `${CLASS_DRAGGED_HANDLE} fixed z-[4] -mt-1 -ml-1`
     this.#dragScrollElement = this
@@ -238,18 +227,17 @@ export class TreeView extends Container {
    * @returns The tree items.
    */
   _getChildrenRange (startChild: TreeViewItem, endChild: TreeViewItem): TreeViewItem[] {
-    const result = []
+    const results = []
 
     // Select search results if we are currently filtering tree view items
     if (this.#filterResults.length > 0) {
-      const filterResults = this.dom.querySelectorAll(`.treeview-item.${CLASS_FILTER_RESULT}`)
+      const filterResults = this.dom.querySelectorAll(`.tv-item.${CLASS_FILTER_RESULT}`)
 
       let startIndex = -1
       let endIndex = -1
 
       for (let i = 0, l = filterResults.length; i < l; i += 1) {
-        // @ts-expect-error @TODO fix
-        const item = filterResults[i].ui
+        const item = this.children.find(child => child.dom === filterResults[i])
 
         if (item === startChild) {
           startIndex = i
@@ -261,8 +249,10 @@ export class TreeView extends Container {
           const start = (startIndex < endIndex ? startIndex : endIndex)
           const end = (startIndex < endIndex ? endIndex : startIndex)
           for (let j = start; j <= end; j += 1) {
-            // @ts-expect-error @TODO fix
-            result.push(filterResults[j].ui)
+            const el = this.children.find(child => child.dom === filterResults[j])
+            if (el !== undefined) {
+              results.push(el as TreeViewItem)
+            }
           }
 
           break
@@ -276,25 +266,25 @@ export class TreeView extends Container {
       const rectEnd = endChild.dom.getBoundingClientRect()
 
       if (rectStart.top < rectEnd.top) {
-        while (current && current !== endChild) {
+        while (current !== null && current !== endChild) {
           current = findNextVisibleTreeItem(current)
-          if (current && current !== endChild) {
-            result.push(current)
+          if (current !== null && current !== endChild) {
+            results.push(current)
           }
         }
       } else {
-        while (current && current !== endChild) {
+        while (current !== null && current !== endChild) {
           current = findPreviousVisibleTreeItem(current)
-          if (current && current !== endChild) {
-            result.push(current)
+          if (current !== null && current !== endChild) {
+            results.push(current)
           }
         }
       }
 
-      result.push(endChild)
+      results.push(endChild)
     }
 
-    return result
+    return results
   }
 
   override _onAppendChild (element: TreeViewItem) {
@@ -324,23 +314,29 @@ export class TreeView extends Container {
       this._searchItems([[element.text, element]], this.#filter)
     }
 
+    const { children } = element
+
     // Do the same for all children of the element
-    element.forEachChild((child: Element) => {
-      if (child instanceof TreeViewItem) {
-        this._onAppendTreeViewItem(child)
+    if (children.length > 0) {
+      for (let i = 0, l = children.length; i < l; i += 1) {
+        if (children[i] instanceof TreeViewItem) {
+          this._onAppendTreeViewItem(children[i] as TreeViewItem)
+        }
       }
-    })
+    }
   }
 
   _onRemoveTreeViewItem (element: TreeViewItem) {
     element.selected = false
 
+    const { items } = element
+
     // Do the same for all children of the element
-    element.forEachChild((child: Element) => {
-      if (child instanceof TreeViewItem) {
-        this._onRemoveTreeViewItem(child)
+    if (items.length > 0) {
+      for (let i = 0, l = items.length; i < l; i += 1) {
+        this._onRemoveTreeViewItem(items[i])
       }
-    })
+    }
   }
 
   // Called when a key is down on a child TreeViewItem.
@@ -419,11 +415,12 @@ export class TreeView extends Container {
       selected.parentsOpen = true
 
       const children = this._getChildrenRange(selected, element)
-      children.forEach((child) => {
-        if (child.allowSelect) {
-          child.selected = true
+
+      for (let i = 0, l = children.length; i < l; i += 1) {
+        if (children[i].allowSelect) {
+          children[i].selected = true
         }
-      })
+      }
     } else {
       // Deselect other items
       this.#selectSingleItem(element)
@@ -443,17 +440,15 @@ export class TreeView extends Container {
 
       fn(item)
 
-      if (item.numChildren) {
-        for (let i = 0, l = item.dom.childNodes.length; i < l; i += 1) {
-          // @ts-expect-error @TODO fix
-          traverse(item.dom.childNodes[i].ui)
+      if (item.children.length > 0) {
+        for (let i = 0, l = item.children.length; i < l; i += 1) {
+          traverse(item.children[i] as TreeViewItem)
         }
       }
     }
 
-    for (let i = 0, l = this.dom.childNodes.length; i < l; i += 1) {
-      // @ts-expect-error @TODO fix
-      traverse(this.dom.childNodes[i].ui)
+    for (let i = 0, l = this.children.length; i < l; i += 1) {
+      traverse(this.children[i] as TreeViewItem)
     }
   }
 
@@ -473,7 +468,7 @@ export class TreeView extends Container {
   }
 
   // Called when we start dragging a TreeViewItem.
-  override _onChildDragStart (_evt: MouseEvent, element: TreeViewItem) {
+  _onChildDragStart (_evt: MouseEvent, element: TreeViewItem) {
     if (!this.allowDrag || this.#dragging) {
       return
     }
@@ -536,7 +531,7 @@ export class TreeView extends Container {
   }
 
   // Called when we stop dragging a TreeViewItem.
-  override _onChildDragEnd (_evt: MouseEvent, _element: Element) {
+  _onChildDragEnd (_evt: MouseEvent, _element: Element) {
     if (!this.allowDrag || !this.#dragging) {
       return
     }
@@ -656,7 +651,7 @@ export class TreeView extends Container {
 
   // Called when the mouse moves while dragging
   #onMouseMove = (evt: MouseEvent) => {
-    // Determine if we need to scroll the treeview if we are dragging towards the edges
+    // Determine if we need to scroll the Treeview if we are dragging towards the edges
     const rect = this.dom.getBoundingClientRect()
     const dragEl = this.#dragScrollElement.dom
     this.#dragScroll = 0
@@ -682,7 +677,7 @@ export class TreeView extends Container {
     }
   }
 
-  // Scroll treeview if we are dragging towards the edges
+  // Scroll Treeview if we are dragging towards the edges
   #scrollWhileDragging = () => {
     if (!this.#dragging) {
       return
@@ -743,13 +738,15 @@ export class TreeView extends Container {
         this.#dragOverItem = null
       } else if (
         this.allowReordering && area <= 1 &&
+        this.#dragOverItem.previousSibling !== null &&
         !dragItems.includes(this.#dragOverItem.previousSibling)
       ) {
         this.#dragArea = DRAG_AREA_BEFORE
       } else if (
         this.allowReordering && area >= 4 &&
+        this.#dragOverItem.nextSibling !== null &&
         !dragItems.includes(this.#dragOverItem.nextSibling) &&
-        (this.#dragOverItem.numChildren === 0 || !this.#dragOverItem.open)
+        (this.#dragOverItem.children.length === 0 || !this.#dragOverItem.open)
       ) {
         this.#dragArea = DRAG_AREA_AFTER
       } else {
@@ -890,7 +887,7 @@ export class TreeView extends Container {
   }
 
   /**
-   * Searches treeview
+   * Searches Treeview
    *
    * @param filter - The search filter
    */
@@ -900,7 +897,7 @@ export class TreeView extends Container {
     this.#wasDraggingAllowedBeforeFiltering = this.#allowDrag
     this.#allowDrag = false
 
-    this.dom.classList.add(CLASS_FILTERING)
+    this.dom.classList.add('tv-filtering')
 
     const search: [string, TreeViewItem][] = []
     this.traverseDepthFirst((item) => {
@@ -950,22 +947,10 @@ export class TreeView extends Container {
    * @description Removes all child tree view items
    */
   clearTreeItems () {
-    let i = this.dom.childNodes.length - 1
-
-    while (i > -1) {
-      const dom = this.dom.childNodes[i]
-      if (!dom) {
-        i -= 1
-        continue
+    for (let i = 0, l = this.children.length; i < l; i += 1) {
+      if (this.children[i] instanceof TreeViewItem) {
+        this.children[i].destroy()
       }
-
-      // @ts-expect-error @TODO Fix
-      const { ui } = dom.ui
-      if (ui instanceof TreeViewItem) {
-        ui.destroy()
-      }
-
-      i -= 1
     }
 
     this.#selectedItems.splice(0, this.#selectedItems.length)
@@ -1085,5 +1070,3 @@ export class TreeView extends Container {
     return this.#pressedShift
   }
 }
-
-export default TreeView

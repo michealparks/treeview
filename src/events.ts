@@ -16,11 +16,13 @@ export class Events {
    */
   on<Type = unknown> (name: string, fn: HandleEvent<Type>): EventHandle {
     const events = this.#events[name]
+
     if (events === undefined) {
       this.#events[name] = [fn]
     } else if (events.indexOf(fn) === -1) {
       events.push(fn)
     }
+
     return new EventHandle(this, name, fn)
   }
 

@@ -4,7 +4,6 @@ import { Container } from './container'
 import type { Element } from './element'
 import { Label } from './label'
 
-const CLASS_ContextMenu = 'contextmenu'
 const CLASS_ContextMenu_active = `contextmenu-active`
 const CLASS_ContextMenu_parent = `contextmenu-parent`
 const CLASS_ContextMenu_child = `contextmenu-child`
@@ -39,7 +38,7 @@ export class ContextMenu {
 
     // @ts-expect-error @TODO fix
     this.#menu.contextMenu = this
-    this.#menu.dom.classList.add(CLASS_ContextMenu)
+    this.#menu.dom.classList.add('contextmenu')
     const menu = this.#menu
 
     const triggerElement = args.triggerElement ?? args.dom?.parentElement
@@ -120,7 +119,7 @@ export class ContextMenu {
     }
     menuItemElement.dom.addEventListener('mouseover', (event: MouseEvent) => {
       // If (!e.fromElement.classList.contains('contextmenu-parent')) return;
-      this.#menu.forEachChild((node: Element) => {
+      this.#menu.children.forEach((node: Element) => {
         node.dom.classList.remove(CLASS_ContextMenu_parent_active)
       })
       menuItemElement.dom.classList.add(CLASS_ContextMenu_parent_active)
@@ -132,7 +131,8 @@ export class ContextMenu {
       if (event.clientY + maxMenuHeight > window.innerHeight) {
         top = -maxMenuHeight + 27.0
       }
-      menuItemElement.forEachChild((node: Element, j: number) => {
+
+      menuItemElement.children.forEach((node: Element, j: number) => {
         if (j === 0) {
           return
         }

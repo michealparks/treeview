@@ -4,6 +4,7 @@ body {
   place-content: center;
   height: 100vh;
   overflow: hidden;
+  background: #ddd;
 }
 
 body, input {

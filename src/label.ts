@@ -27,17 +27,7 @@ export class Label extends Element {
   constructor (args: Args = {}) {
     super(args)
 
-    this.dom.classList.add(
-      'inline-block',
-      'align-middle',
-      'whitespace-nowrap',
-      'label',
-      'm-1.5',
-      'overflow-hidden',
-      'text-ellipsis',
-      'select-none'
-    )
-
+    this.dom.className = 'inline-block align-middle whitespace-nowrap label m-1.5 overflow-hidden text-ellipsis select-none'
     this.text = args.text ?? ''
     this.renderChanges = args.renderChanges ?? false
 
