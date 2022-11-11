@@ -25,7 +25,9 @@
   "scripts": {
     "start": "vite -c vite.playground.config.ts --host --open",
     "build": "vite build && tsc --emitDeclarationOnly",
-    "preview": "vite preview"
+    "build-playground": "vite build -c vite.playground.config.ts --base=/treeview/",
+    "check": "tsc --noEmit",
+    "preview": "vite preview --host"
   },
   "devDependencies": {
     "@tweakpane/core": "^1.1.0",
