@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { EventHandle } from './event-handle'
 
 type HandleEvent<Type = unknown> = (...args: Type[]) => void

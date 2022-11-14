@@ -4,10 +4,10 @@ import { Container } from './container'
 import type { Element } from './element'
 import { Label } from './label'
 
-const CLASS_ContextMenu_active = `contextmenu-active`
-const CLASS_ContextMenu_parent = `contextmenu-parent`
-const CLASS_ContextMenu_child = `contextmenu-child`
-const CLASS_ContextMenu_parent_active = `contextmenu-parent-active`
+const CLASS_ContextMenu_active = 'contextmenu-active'
+const CLASS_ContextMenu_parent = 'contextmenu-parent'
+const CLASS_ContextMenu_child = 'contextmenu-child'
+const CLASS_ContextMenu_parent_active = 'contextmenu-parent-active'
 
 interface Item {
   text: string,

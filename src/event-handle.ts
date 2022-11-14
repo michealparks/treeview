@@ -1,5 +1,3 @@
-/* eslint-disable lines-between-class-members */
-
 import type { Events } from './events'
 
 export class EventHandle {

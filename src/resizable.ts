@@ -55,8 +55,8 @@ export class Resizable extends Container {
       this.#domResizeHandle = null
     }
 
-    this.#createResizeHandle()
-    this.dom.appendChild(this.#domResizeHandle!)
+    this.#domResizeHandle = this.#createResizeHandle()
+    this.dom.appendChild(this.#domResizeHandle)
   }
 
   #createResizeHandle () {
@@ -65,7 +65,7 @@ export class Resizable extends Container {
 
     handle.addEventListener('mousedown', this.#onResizeStart)
 
-    this.#domResizeHandle = handle
+    return handle
   }
 
   #onResizeStart = (evt: MouseEvent) => {
@@ -174,29 +174,18 @@ export class Resizable extends Container {
       return
     }
 
-    // Remove old class
-    if (this.#resizable) {
-      this.dom.classList.remove(`resizable-${this.#resizable}`)
-    }
+    this.dom.classList.remove(`resizable-${this.#resizable}`)
 
     this.#resizable = value
     this.#resizeHorizontally = (value === 'right' || value === 'left')
 
-    if (value) {
-      // Add resize class and create / append resize handle
-      this.dom.classList.add('resizable', `resizable-${value}`)
+    // Add resize class and create / append resize handle
+    this.dom.classList.add('resizable', `resizable-${value}`)
 
-      if (this.#domResizeHandle === null) {
-        this.#createResizeHandle()
-      }
-      this.dom.append(this.#domResizeHandle!)
-    } else {
-      // Remove resize class and resize handle
-      this.dom.classList.remove('resizable')
-      if (this.#domResizeHandle !== null) {
-        this.dom.removeChild(this.#domResizeHandle)
-      }
+    if (this.#domResizeHandle === null) {
+      this.#domResizeHandle = this.#createResizeHandle()
     }
+    this.dom.append(this.#domResizeHandle)
   }
 
   get resizable () {

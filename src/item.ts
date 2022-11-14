@@ -2,7 +2,7 @@
 import { Container } from './container'
 import { Label } from './label'
 import { TextInput } from './textinput'
-import type { TreeView } from './main'
+import type { TreeView } from './treeview'
 
 interface Args {
   text: string
@@ -43,7 +43,6 @@ interface Args {
  * @class
  * @classdesc Represents a Tree View Item to be added to a TreeView.
  * @mixes IFocusable
-
  * @property {Label} textLabel Gets the internal label that shows the text.
  * @property {Label} iconLabel Gets the internal label that shows the icon.
  * @property {TreeView} treeView Gets / sets the parent TreeView.
@@ -242,7 +241,11 @@ export class TreeViewItem extends Container {
   }
 
   #onContentDblClick = (evt: MouseEvent): void => {
-    if (!this.treeView || !this.treeView.allowRenaming || evt.button !== 0) {
+    if (
+      this.treeView === undefined ||
+      !this.treeView.allowRenaming ||
+      evt.button !== 0
+    ) {
       return
     }
 
@@ -435,7 +438,7 @@ export class TreeViewItem extends Container {
     if (this.children.length === 0) {
       return null
     }
-  
+
     for (let i = 0, l = this.children.length; i < l; i += 1) {
       if (this.children[i] instanceof TreeViewItem) {
         return this.children[i] as TreeViewItem
