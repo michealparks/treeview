@@ -312,6 +312,7 @@ export class Element extends Events {
     if (this.#ignoreParent) {
       return this.#enabled
     }
+  
     return this.#enabled && (!this.#parent || this.#parent.enabled)
   }
 

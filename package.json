@@ -27,6 +27,7 @@
     "build": "vite build && tsc --emitDeclarationOnly",
     "build-playground": "vite build -c vite.playground.config.ts --base=/treeview/",
     "check": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts",
     "preview": "vite preview --host"
   },
   "devDependencies": {
