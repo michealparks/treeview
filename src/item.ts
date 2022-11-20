@@ -294,7 +294,6 @@ export class TreeViewItem extends Node {
     })
 
     const destroy = () => {
-      console.log('here')
       textInput.destroy()
       this.dom.classList.remove('tv-item-rename')
       this.focus()
@@ -303,7 +302,6 @@ export class TreeViewItem extends Node {
     textInput.on('blur', destroy)
 
     textInput.on<string>('change', (value) => {
-      console.log('here2')
       const normalized = value.trim()
       if (normalized !== '') {
         this.text = normalized
