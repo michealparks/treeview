@@ -1,6 +1,6 @@
 import './main.css'
 import { Pane, type TpChangeEvent } from 'tweakpane'
-import { TreeView, TreeViewItem } from '../src/main'
+import { TreeView, TreeViewItem, resizable } from '../src/main'
 
 // const el = new Resizable()
 // el.resizable = 'right'
@@ -8,10 +8,12 @@ import { TreeView, TreeViewItem } from '../src/main'
 
 const treeview = new TreeView()
 treeview.dom.classList.add('sticky', 'top-0')
-treeview.resizable = 'bottom'
-treeview.resizeMax = Infinity
-treeview.height = 300
-document.body.append(treeview.domElement)
+document.body.append(resizable({
+  element: treeview.domElement,
+  side: 'bottom',
+  max: Infinity,
+  height: 300
+}))
 
 const root = new TreeViewItem({ text: `root` })
 treeview.append(root)

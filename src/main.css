@@ -11,40 +11,6 @@
 .label.selectable:hover {
   user-select: none;
 }
-.resizable > * {
-  overflow: auto;
-  max-height: 100%;
-}
-.resizable-left > .resizable-handle,
-.resizable-right > .resizable-handle {
-  top: 0;
-  bottom: 0;
-  height: auto;
-  cursor: ew-resize;
-}
-.resizable-top > .resizable-handle,
-.resizable-bottom > .resizable-handle {
-  left: 0;
-  right: 0;
-  width: auto;
-  cursor: ns-resize;
-}
-.resizable-left > .resizable-handle {
-  left: 0;
-  border-left-width: 3px;
-}
-.resizable-right > .resizable-handle {
-  right: 0;
-  border-right-width: 3px;
-}
-.resizable-top > .resizable-handle {
-  top: 0;
-  border-top-width: 3px;
-}
-.resizable-bottom > .resizable-handle {
-  bottom: 0;
-  border-bottom-width: 3px;
-}
 .label {
   vertical-align: middle;
   transition: opacity 100ms;

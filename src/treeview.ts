@@ -4,7 +4,6 @@ import css from './main.css?inline'
 import { Node } from './node'
 import { TreeViewItem } from './item'
 import { searchItems } from './search'
-import { Resize } from './resize'
 
 const CLASS_DRAGGED_ITEM = 'tv-item-dragged'
 const CLASS_DRAGGED_HANDLE = 'tv-drag-handle'
@@ -179,8 +178,6 @@ export class TreeView extends Node {
   #dragHandle = document.createElement('div')
   #dragScrollElement: Node
 
-  #resize = new Resize()
-
   /**
    * Creates a new TreeView.
    *
@@ -191,8 +188,7 @@ export class TreeView extends Node {
 
     const { dom } = this
   
-    this.shadowRoot.append(this.#resize.dom)
-    this.#resize.append(dom)
+    this.shadowRoot.append(dom)
 
     const style = document.createElement('style')
     style.innerHTML = css
@@ -1057,25 +1053,5 @@ export class TreeView extends Node {
 
   get pressedShift (): boolean {
     return this.#pressedShift
-  }
-
-  set resizable (side: 'left' | 'right' | 'top' | 'bottom' | null) {
-    this.#resize.resizable = side
-  }
-
-  get resizable () {
-    return this.#resize.resizable
-  }
-
-  set resizeMax (max: number) {
-    this.#resize.resizeMax = max
-  }
-
-  set resizeMin (min: number) {
-    this.#resize.resizeMin = min
-  }
-
-  override set height (value: number) {
-    this.#resize.height = value
   }
 }
