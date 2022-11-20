@@ -28,7 +28,7 @@ export const resizable = (args: Args) => {
   const dom = document.createElement('div')
   const handle = document.createElement('div')
   handle.style.cssText = `
-    position: sticky;
+    position: absolute;
     z-index: 1000;
     opacity: 0.5;
     background-color: var(--color-resize-handle, #888);
@@ -36,6 +36,7 @@ export const resizable = (args: Args) => {
     ${horizontal ? 'width' : 'height'}: 3px;
     ${horizontal ? 'height' : 'width'}: 100%;
     ${side}: 0;
+    ${horizontal ? 'top: 0; bottom: 0;' : 'left: 0; right: 0;'}
   `
 
   const onResizeMove = (event: MouseEvent) => {
