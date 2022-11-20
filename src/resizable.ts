@@ -11,6 +11,16 @@ interface Args {
   width?: number
 }
 
+const getPosition = (side: Sides) => {
+  switch (side) {
+  case 'left': return 'left: 0;'
+  case 'right': return 'left: calc(100% - 3px);'
+  case 'top': return 'top: 0;'
+  case 'bottom': return 'bottom: 0;'
+  default: return ''
+  }
+}
+
 export const resizable = (args: Args) => {
   const {
     element,
@@ -28,15 +38,15 @@ export const resizable = (args: Args) => {
   const dom = document.createElement('div')
   const handle = document.createElement('div')
   handle.style.cssText = `
-    position: absolute;
+    position: sticky;
     z-index: 1000;
     opacity: 0.5;
     background-color: var(--color-resize-handle, #888);
     cursor: ${horizontal ? 'ew' : 'ns'}-resize;
     ${horizontal ? 'width' : 'height'}: 3px;
     ${horizontal ? 'height' : 'width'}: 100%;
-    ${side}: 0;
     ${horizontal ? 'top: 0; bottom: 0;' : 'left: 0; right: 0;'}
+    ${getPosition(side)}
   `
 
   const onResizeMove = (event: MouseEvent) => {

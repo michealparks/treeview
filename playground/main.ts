@@ -10,7 +10,7 @@ const treeview = new TreeView()
 treeview.dom.classList.add('sticky', 'top-0')
 document.body.append(resizable({
   element: treeview.domElement,
-  side: 'bottom',
+  side: 'right',
   max: Infinity,
   height: 300
 }))
