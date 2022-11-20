@@ -1,4 +1,3 @@
-export { Container } from './container'
-export { Resizable } from './resizable'
+export { Resize } from './resize'
 export { TreeView } from './treeview'
 export { TreeViewItem } from './item'

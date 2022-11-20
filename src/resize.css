@@ -1,0 +1,41 @@
+.resize {
+  position: relative;
+  overflow: auto;
+}
+.handle {
+  position: sticky;
+  z-index: 1000;
+  opacity: 0.5;
+  background-color: var(--color-resize-handle, #888);
+}
+.handle:hover {
+  opacity: 1;
+}
+.handle.left,
+.handle.right {
+  top: 0;
+  bottom: 0;
+  height: auto;
+  width: 3px;
+  cursor: ew-resize;
+}
+.handle.top,
+.handle.bottom {
+  left: 0;
+  right: 0;
+  width: auto;
+  height: 3px;
+  cursor: ns-resize;
+}
+.handle.left {
+  left: 0;
+}
+.handle.right {
+  right: 0;
+}
+.handle.top {
+  top: 0;
+}
+.handle.bottom {
+  bottom: 0;
+}

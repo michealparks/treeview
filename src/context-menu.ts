@@ -1,13 +1,5 @@
-/* eslint-disable camelcase */
-/* eslint-disable no-underscore-dangle */
-import { Container } from './container'
-import type { Element } from './element'
 import { Label } from './label'
-
-const CLASS_ContextMenu_active = 'contextmenu-active'
-const CLASS_ContextMenu_parent = 'contextmenu-parent'
-const CLASS_ContextMenu_child = 'contextmenu-child'
-const CLASS_ContextMenu_parent_active = 'contextmenu-parent-active'
+import { Node } from './node'
 
 interface Item {
   text: string,
@@ -25,7 +17,7 @@ interface Args {
  * Represents a context menu.
  */
 export class ContextMenu {
-  #menu: Container
+  #menu: Node
 
   /**
    * Creates a new ContextMenu.
@@ -34,7 +26,7 @@ export class ContextMenu {
    * @param {object} [args.triggerElement] - Will trigger the context menu to open when right clicked. If undefined args.dom will be used.
    */
   constructor (args: Args) {
-    this.#menu = new Container(args)
+    this.#menu = new Node()
 
     // @ts-expect-error @TODO fix
     this.#menu.contextMenu = this
@@ -48,7 +40,7 @@ export class ContextMenu {
         event.preventDefault()
         event.stopPropagation()
 
-        menu.dom.classList.add(CLASS_ContextMenu_active)
+        menu.dom.classList.add('contextmenu-active')
         const maxMenuHeight = args.items.length * 27.0
         const maxMenuWidth = 150.0
 
@@ -83,12 +75,12 @@ export class ContextMenu {
   }
 
   removeMenu = () => {
-    this.#menu.dom.classList.remove(CLASS_ContextMenu_active)
+    this.#menu.dom.classList.remove('contextmenu-active')
     document.removeEventListener('click', this.removeMenu)
   }
 
   addItem (menuItem: Item, index: number) {
-    const menuItemElement = new Container()
+    const menuItemElement = new Node()
     menuItemElement.dom.setAttribute('style', `top: ${index * 27.0}px`)
     if (menuItem.onClick) {
       menuItemElement.on('click', (event: MouseEvent) => {
@@ -103,8 +95,8 @@ export class ContextMenu {
     this.#menu.dom.append(menuItemElement.dom)
     if (menuItem.items) {
       menuItem.items.forEach((childItem, j) => {
-        const childMenuItemElement = new Container()
-        childMenuItemElement.dom.classList.add(CLASS_ContextMenu_child)
+        const childMenuItemElement = new Node()
+        childMenuItemElement.dom.classList.add('contextmenu-child')
         childMenuItemElement.dom.setAttribute('style', `top: ${j * 27.0}px; left: 150px;`)
         childMenuItemElement.on('click', (event: MouseEvent) => {
           event.stopPropagation()
@@ -115,14 +107,14 @@ export class ContextMenu {
         childMenuItemElement.append(childMenuItemLabel)
         menuItemElement.append(childMenuItemElement)
       })
-      menuItemElement.dom.classList.add(CLASS_ContextMenu_parent)
+      menuItemElement.dom.classList.add('contextmenu-parent')
     }
     menuItemElement.dom.addEventListener('mouseover', (event: MouseEvent) => {
       // If (!e.fromElement.classList.contains('contextmenu-parent')) return;
-      this.#menu.children.forEach((node: Element) => {
-        node.dom.classList.remove(CLASS_ContextMenu_parent_active)
+      this.#menu.children.forEach((node: Node) => {
+        node.dom.classList.remove('contextmenu-parent-active')
       })
-      menuItemElement.dom.classList.add(CLASS_ContextMenu_parent_active)
+      menuItemElement.dom.classList.add('contextmenu-parent-active')
 
       const maxMenuHeight = menuItem.items ? menuItem.items.length * 27.0 : 0.0
       const maxMenuWidth = 150.0
@@ -132,7 +124,7 @@ export class ContextMenu {
         top = -maxMenuHeight + 27.0
       }
 
-      menuItemElement.children.forEach((node: Element, j: number) => {
+      menuItemElement.children.forEach((node: Node, j: number) => {
         if (j === 0) {
           return
         }

@@ -71,5 +71,6 @@ module.exports = {
     'semi': ['error', 'never'],
 
     '@typescript-eslint/prefer-for-of': 'off',
+    '@typescript-eslint/prefer-includes': 'off',
   },
 }

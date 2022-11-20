@@ -1,45 +1,31 @@
-import { Element } from './element'
+import { Node } from './node'
 
 interface Args {
   /**
    * If true then the label can be clicked to select text.
    */
   allowTextSelection?: boolean
-  dom?: HTMLElement
   text?: string
-  renderChanges?: boolean
 }
 
 /**
  * The Label is a simple span element that displays some text.
  */
-export class Label extends Element {
-  /**
-   * If true then the Label will flash when its text changes.
-   */
-  renderChanges = false
-
+export class Label extends Node {
   #text = ''
 
   /**
    * Creates a new Label.
    */
   constructor (args: Args = {}) {
-    super(args)
+    super()
 
     this.dom.className = 'inline-block align-middle whitespace-nowrap label m-1.5 overflow-hidden text-ellipsis select-none'
     this.text = args.text ?? ''
-    this.renderChanges = args.renderChanges ?? false
 
     if (args.allowTextSelection) {
       this.dom.classList.add('default-mousedown')
     }
-
-    this.on('change', () => {
-      if (this.renderChanges) {
-        this.flash()
-      }
-    })
   }
 
   /**

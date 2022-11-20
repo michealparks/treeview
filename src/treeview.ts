@@ -1,24 +1,21 @@
 /* eslint-disable max-depth */
 /* eslint-disable no-underscore-dangle */
 import css from './main.css?inline'
-
-import { Resizable } from './resizable'
-import type { Container } from './container'
-import type { Element } from './element'
+import { Node } from './node'
 import { TreeViewItem } from './item'
 import { searchItems } from './search'
+import { Resize } from './resize'
 
-const CLASS_DRAGGED_ITEM = `tv-item-dragged`
-const CLASS_DRAGGED_HANDLE = `tv-drag-handle`
-const CLASS_FILTERING = `tv-filtering`
-const CLASS_FILTER_RESULT = `tv-filtering-result`
-
+const CLASS_DRAGGED_ITEM = 'tv-item-dragged'
+const CLASS_DRAGGED_HANDLE = 'tv-drag-handle'
+const CLASS_FILTERING = 'tv-filtering'
+const CLASS_FILTER_RESULT = 'tv-filtering-result'
 const DRAG_AREA_INSIDE = 'inside'
 const DRAG_AREA_BEFORE = 'before'
 const DRAG_AREA_AFTER = 'after'
 
-const getChildIndex = (item: Element, parent: Element) => {
-  return Array.prototype.indexOf.call(parent.dom.childNodes, item.dom) - 1
+const getChildIndex = (item: Node, parent: Node) => {
+  return parent.children.indexOf(item) - 1
 }
 
 /**
@@ -144,7 +141,7 @@ const findPreviousVisibleTreeItem = (currentItem: TreeViewItem): TreeViewItem | 
 /**
  * A container that can show a Treeview like a hierarchy. The Treeview contains TreeViewItems.
  */
-export class TreeView extends Resizable {
+export class TreeView extends Node {
   /**
    * Whether reordering TreeViewItems is allowed.
    * @default true
@@ -157,7 +154,8 @@ export class TreeView extends Resizable {
    */
   allowRenaming = true
 
-  domElement: HTMLElement
+  domElement = document.createElement('tree-view');
+  shadowRoot = this.domElement.attachShadow({ mode: 'open' });
 
   /**
    * A function to be called when we right click on a TreeViewItem.
@@ -179,42 +177,41 @@ export class TreeView extends Resizable {
   #filterResults: TreeViewItem[] = []
 
   #dragHandle = document.createElement('div')
-  #dragScrollElement: Element
+  #dragScrollElement: Node
+
+  #resize = new Resize()
 
   /**
    * Creates a new TreeView.
    *
-   * @param {Element} [args.dragScrollElement] - An element (usually a container of the tree view) that will be scrolled when the user
-   * drags towards the edges of the Treeview. Defaults to the TreeView itself.
    * tree items will not be reparented by the TreeView but instead will rely on the function to reparent them as it sees fit.
    */
   constructor (args = {}) {
-    const host = document.createElement('tree-view');
-    const shadowRoot = host.attachShadow({ mode: 'open' });
-    const dom = document.createElement('div')
-    shadowRoot.append(dom)
+    super({ ...args })
+
+    const { dom } = this
+  
+    this.shadowRoot.append(this.#resize.dom)
+    this.#resize.append(dom)
 
     const style = document.createElement('style')
     style.innerHTML = css
-    shadowRoot.append(style)
+    this.shadowRoot.append(style)
 
-    super({ ...args, dom })
-
-    this.domElement = host
     this.dom.className = 'tv relative z-10 bg-default-gray text-white min-w-max font-mono text-[11px]'
 
     this.#dragHandle.className = `${CLASS_DRAGGED_HANDLE} fixed z-[4] -mt-1 -ml-1`
     this.#dragScrollElement = this
     this.dom.append(this.#dragHandle)
 
-    window.addEventListener('keydown', this._updateModifierKeys)
-    window.addEventListener('keyup', this._updateModifierKeys)
-    window.addEventListener('mousedown', this._updateModifierKeys)
+    window.addEventListener('keydown', this.updateModifierKeys)
+    window.addEventListener('keyup', this.updateModifierKeys)
+    window.addEventListener('mousedown', this.updateModifierKeys)
 
     this.dom.addEventListener('mouseleave', this.#onMouseLeave)
   }
 
-  _updateModifierKeys = (evt: MouseEvent | KeyboardEvent) => {
+  updateModifierKeys = (evt: MouseEvent | KeyboardEvent) => {
     this.#pressedCtrl = evt.ctrlKey || evt.metaKey
     this.#pressedShift = evt.shiftKey
   }
@@ -226,7 +223,7 @@ export class TreeView extends Resizable {
    * @param endChild - The end tree item.
    * @returns The tree items.
    */
-  _getChildrenRange (startChild: TreeViewItem, endChild: TreeViewItem): TreeViewItem[] {
+  #getChildrenRange (startChild: TreeViewItem, endChild: TreeViewItem): TreeViewItem[] {
     const results = []
 
     // Select search results if we are currently filtering tree view items
@@ -287,23 +284,23 @@ export class TreeView extends Resizable {
     return results
   }
 
-  override _onAppendChild (element: TreeViewItem) {
-    super._onAppendChild(element)
+  override onAppend (element: TreeViewItem) {
+    super.onAppend(element)
 
     if (element instanceof TreeViewItem) {
-      this._onAppendTreeViewItem(element)
+      this.onAppendTreeViewItem(element)
     }
   }
 
-  override _onRemoveChild (element: TreeViewItem) {
+  override remove (element: TreeViewItem) {
     if (element instanceof TreeViewItem) {
-      this._onRemoveTreeViewItem(element)
+      this.onRemoveTreeViewItem(element)
     }
 
-    super._onRemoveChild(element)
+    super.remove(element)
   }
 
-  _onAppendTreeViewItem (element: TreeViewItem) {
+  onAppendTreeViewItem (element: TreeViewItem) {
     element.treeView = this
 
     if (this.#filter !== '') {
@@ -320,13 +317,13 @@ export class TreeView extends Resizable {
     if (children.length > 0) {
       for (let i = 0, l = children.length; i < l; i += 1) {
         if (children[i] instanceof TreeViewItem) {
-          this._onAppendTreeViewItem(children[i] as TreeViewItem)
+          this.onAppendTreeViewItem(children[i] as TreeViewItem)
         }
       }
     }
   }
 
-  _onRemoveTreeViewItem (element: TreeViewItem) {
+  onRemoveTreeViewItem (element: TreeViewItem) {
     element.selected = false
 
     const { items } = element
@@ -334,13 +331,13 @@ export class TreeView extends Resizable {
     // Do the same for all children of the element
     if (items.length > 0) {
       for (let i = 0, l = items.length; i < l; i += 1) {
-        this._onRemoveTreeViewItem(items[i])
+        this.onRemoveTreeViewItem(items[i])
       }
     }
   }
 
   // Called when a key is down on a child TreeViewItem.
-  _onChildKeyDown (evt: KeyboardEvent, element: TreeViewItem) {
+  onChildKeyDown (evt: KeyboardEvent, element: TreeViewItem) {
     const lowerKey = evt.key.toLowerCase()
 
     if (
@@ -392,7 +389,7 @@ export class TreeView extends Resizable {
   }
 
   // Called when we click on a child TreeViewItem
-  _onChildClick (event: MouseEvent, element: TreeViewItem) {
+  onChildClick (event: MouseEvent, element: TreeViewItem) {
     if (event.button !== 0) {
       return
     }
@@ -414,7 +411,7 @@ export class TreeView extends Resizable {
       const selected = this.#selectedItems[this.#selectedItems.length - 1]
       selected.parentsOpen = true
 
-      const children = this._getChildrenRange(selected, element)
+      const children = this.#getChildrenRange(selected, element)
 
       for (let i = 0, l = children.length; i < l; i += 1) {
         if (children[i].allowSelect) {
@@ -468,7 +465,7 @@ export class TreeView extends Resizable {
   }
 
   // Called when we start dragging a TreeViewItem.
-  _onChildDragStart (_evt: MouseEvent, element: TreeViewItem) {
+  onChildDragStart (_evt: MouseEvent, element: TreeViewItem) {
     if (!this.allowDrag || this.#dragging) {
       return
     }
@@ -531,7 +528,7 @@ export class TreeView extends Resizable {
   }
 
   // Called when we stop dragging a TreeViewItem.
-  _onChildDragEnd (_evt: MouseEvent, _element: Element) {
+  onChildDragEnd (_evt: MouseEvent, _element: Node) {
     if (!this.allowDrag || !this.#dragging) {
       return
     }
@@ -568,9 +565,9 @@ export class TreeView extends Resizable {
         // Reparent items
         const reparented: {
           item: TreeViewItem,
-          parent?: Element | null
-          newParent?: Element | null
-          oldParent?: Element | null
+          parent?: Node | null
+          newParent?: Node | null
+          oldParent?: Node | null
           newChildIndex?: number
         }[] = []
 
@@ -583,9 +580,9 @@ export class TreeView extends Resizable {
 
           reparented.push({
             item,
-            oldParent: item.parent,
+            oldParent: item.parent as Node | null,
           });
-          (item.parent as Container)?.remove(item)
+          item.parent?.remove(item)
         }
 
         // Now reparent items
@@ -594,7 +591,7 @@ export class TreeView extends Resizable {
           if (this.#dragArea === DRAG_AREA_BEFORE) {
             // If dragged before a TreeViewItem...
             r.newParent = this.#dragOverItem.parent;
-            (this.#dragOverItem.parent as Container).appendBefore(r.item, this.#dragOverItem)
+            this.#dragOverItem.parent?.appendBefore(r.item, this.#dragOverItem)
             r.newChildIndex = getChildIndex(r.item, r.newParent!)
           } else if (this.#dragArea === DRAG_AREA_INSIDE) {
             // If dragged inside a TreeViewItem...
@@ -605,7 +602,7 @@ export class TreeView extends Resizable {
           } else if (this.#dragArea === DRAG_AREA_AFTER) {
             // If dragged after a TreeViewItem...
             r.newParent = this.#dragOverItem.parent;
-            (this.#dragOverItem.parent as Container).appendAfter(r.item, i > 0 ? reparented[i - 1].item : this.#dragOverItem)
+            this.#dragOverItem.parent?.appendAfter(r.item, i > 0 ? reparented[i - 1].item : this.#dragOverItem)
             r.newChildIndex = getChildIndex(r.item, r.newParent!)
           }
         }
@@ -624,7 +621,7 @@ export class TreeView extends Resizable {
   }
 
   // Called when we drag over a TreeViewItem.
-  _onChildDragOver (evt: MouseEvent, element: TreeViewItem) {
+  onChildDragOver (evt: MouseEvent, element: TreeViewItem) {
     if (!this.#allowDrag || !this.#dragging) {
       return
     }
@@ -784,7 +781,7 @@ export class TreeView extends Resizable {
       this.#dragHandle.hidden = true
     } else {
       const handle = this.#dragHandle
-      const rect = item.containerContents.dom.getBoundingClientRect()
+      const rect = item.contents.getBoundingClientRect()
 
       handle.hidden = false
       handle.classList.remove(DRAG_AREA_AFTER, DRAG_AREA_BEFORE, DRAG_AREA_INSIDE)
@@ -835,7 +832,7 @@ export class TreeView extends Resizable {
    *
    * @param item - The tree view item.
    */
-  _onChildSelected (item: TreeViewItem) {
+  onChildSelected (item: TreeViewItem) {
     this.#selectedItems.push(item)
     item.parentsOpen = true
     this.emit('select', item)
@@ -846,7 +843,7 @@ export class TreeView extends Resizable {
    *
    * @param element - The element.
    */
-  _onChildDeselected (element: TreeViewItem) {
+  onChildDeselected (element: TreeViewItem) {
     const index = this.#selectedItems.indexOf(element)
     if (index !== -1) {
       this.#selectedItems.splice(index, 1)
@@ -858,7 +855,7 @@ export class TreeView extends Resizable {
    * Called when a child tree view item is renamed.
    *
    */
-  _onChildRename (item: TreeViewItem, newName: string | null | undefined) {
+  onChildRename (item: TreeViewItem, newName: string | null | undefined) {
     if (this.#filter !== '') {
       // Unfilter this item
       item.dom.classList.remove(CLASS_FILTER_RESULT)
@@ -912,9 +909,6 @@ export class TreeView extends Resizable {
    */
   _clearFilter () {
     this.#filterResults.forEach((item) => {
-      if (item.destroyed) {
-        return
-      }
       item.dom.classList.remove(CLASS_FILTER_RESULT)
     })
     this.#filterResults.splice(0, this.#filterResults.length)
@@ -959,16 +953,11 @@ export class TreeView extends Resizable {
   }
 
   override destroy () {
-    if (this.destroyed) {
-      return
-    }
-
     this.dom.removeEventListener('mousemove', this.#onDragMove)
-    window.removeEventListener('keydown', this._updateModifierKeys)
-    window.removeEventListener('keyup', this._updateModifierKeys)
-    window.removeEventListener('mousedown', this._updateModifierKeys)
+    window.removeEventListener('keydown', this.updateModifierKeys)
+    window.removeEventListener('keyup', this.updateModifierKeys)
+    window.removeEventListener('mousedown', this.updateModifierKeys)
     window.removeEventListener('mousemove', this.#onMouseMove)
-
     this.dom.removeEventListener('mouseleave', this.#onMouseLeave)
 
     if (this.#dragScrollInterval > -1) {
@@ -1008,7 +997,7 @@ export class TreeView extends Resizable {
       this.dom.addEventListener('mousemove', this.#onDragMove)
 
       // Handle mouse move to scroll when dragging if necessary
-      if (this.scrollable || this.#dragScrollElement !== this) {
+      if (this.#dragScrollElement !== this) {
         window.removeEventListener('mousemove', this.#onMouseMove)
         window.addEventListener('mousemove', this.#onMouseMove)
         if (this.#dragScrollInterval === -1) {
@@ -1068,5 +1057,25 @@ export class TreeView extends Resizable {
 
   get pressedShift (): boolean {
     return this.#pressedShift
+  }
+
+  set resizable (side: 'left' | 'right' | 'top' | 'bottom' | null) {
+    this.#resize.resizable = side
+  }
+
+  get resizable () {
+    return this.#resize.resizable
+  }
+
+  set resizeMax (max: number) {
+    this.#resize.resizeMax = max
+  }
+
+  set resizeMin (min: number) {
+    this.#resize.resizeMin = min
+  }
+
+  override set height (value: number) {
+    this.#resize.height = value
   }
 }

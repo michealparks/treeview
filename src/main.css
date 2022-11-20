@@ -15,9 +15,6 @@
   overflow: auto;
   max-height: 100%;
 }
-.resizable-handle {
-  border-color: var(--color-resize-handle, #888);
-}
 .resizable-left > .resizable-handle,
 .resizable-right > .resizable-handle {
   top: 0;
@@ -48,20 +45,6 @@
   bottom: 0;
   border-bottom-width: 3px;
 }
-/* // Element styling */
-@keyframes flash-animation {
-  from {
-    outline-color: #f60;
- }
-  to {
-    outline-color: rgba(255, 102, 0, 0);
- }
-}
-.flash {
-  outline: 1px solid #f60;
-  -webkit-animation: flash-animation 200ms ease-in-out forwards;
-  animation: flash-animation 200ms ease-in-out forwards;
-}
 .label {
   vertical-align: middle;
   transition: opacity 100ms;
@@ -69,9 +52,6 @@
 }
 .label.default-mousedown {
   user-select: initial;
-}
-.label.error {
-  color: var(--color-error, #d34141);
 }
 .label.selectable:hover {
   color: #f60;
@@ -107,26 +87,14 @@
   background-color: #202020;
   color: #fff;
 }
-.text-input:not(.error):hover {
+.text-input:hover {
   box-shadow: 0 0 2px 1px rgba(255, 102, 0, 0.3);
-}
-.text-input:not(.readonly):focus {
-  background-color: #202020;
-  box-shadow: 0 0 0 1px rgba(255, 102, 0, 0.3);
 }
 .text-input:focus:after,
 .text-input:hover:after,
 .text-input:focus:before,
 .text-input:hover:before {
   display: none;
-}
-.text-input.readonly {
-  background-color: rgba(40, 40, 40, 0.7);
-  border-color: transparent;
-}
-.text-input.error {
-  color: #aaa;
-  box-shadow: 0 0 0 1px #d34141;
 }
 .text-input[placeholder] {
   position: relative;
@@ -271,15 +239,15 @@
 }
 .tv-drag-handle.before {
   margin-top: -2px;
-  border-top: 4px solid rgba(255,255,255,0.5);
+  border-top: 4px solid var(--color-drag-handle, rgba(255,255,255,0.5));
   padding-right: 8px;
 }
 .tv-drag-handle.inside {
-  border: 4px solid rgba(255,255,255,0.5);
+  border: 4px solid var(--color-drag-handle, rgba(255,255,255,0.5));
 }
 .tv-drag-handle.after {
   margin-top: 2px;
-  border-bottom: 4px solid rgba(255,255,255,0.5);
+  border-bottom: 4px solid var(--color-drag-handle, rgba(255,255,255,0.5));
   padding-right: 8px;
 }
 .tv-item-contents:after {

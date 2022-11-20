@@ -2,7 +2,7 @@
 /* eslint-disable prefer-named-capture-group */
 /* eslint-disable no-underscore-dangle */
 
-import type { Element } from './element'
+import type { Node } from './node'
 import type { TreeViewItem } from './item'
 
 /*
@@ -120,7 +120,7 @@ interface Item {
   sub: number
   name: string
   tokens: string[]
-  item: Element
+  item: Node
 }
 
 interface Args {
@@ -276,7 +276,7 @@ export const searchItems = (items: [string, TreeViewItem][], s: string, args: Ar
     return a.name.length - b.name.length
   })
 
-  const results: Element[] = []
+  const results: Node[] = []
 
   // Return only items without match information
   for (i = 0, l = records.length; i < l; i += 1) {
