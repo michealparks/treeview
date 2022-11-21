@@ -194,7 +194,7 @@ export class TreeView extends Node {
     style.innerHTML = css
     this.shadowRoot.append(style)
 
-    this.dom.className = 'tv relative z-10 bg-default-gray text-white min-w-max font-mono text-[11px]'
+    this.dom.className = 'tv relative h-full z-10 bg-default-gray text-white min-w-max font-mono text-[11px]'
 
     this.#dragHandle.className = `${CLASS_DRAGGED_HANDLE} fixed z-[4] -mt-1 -ml-1`
     this.#dragScrollElement = this
@@ -1053,5 +1053,9 @@ export class TreeView extends Node {
 
   get pressedShift (): boolean {
     return this.#pressedShift
+  }
+
+  set scrollable (value: boolean) {
+    this.dom.style.overflow = value ? 'auto' : ''
   }
 }

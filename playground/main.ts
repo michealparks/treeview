@@ -8,6 +8,8 @@ import { TreeView, TreeViewItem, resizable } from '../src/main'
 
 const treeview = new TreeView()
 treeview.dom.classList.add('sticky', 'top-0')
+treeview.scrollable = true
+
 document.body.append(resizable({
   element: treeview.domElement,
   side: 'right',

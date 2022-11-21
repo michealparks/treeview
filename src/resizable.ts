@@ -38,7 +38,7 @@ export const resizable = (args: Args) => {
   const dom = document.createElement('div')
   const handle = document.createElement('div')
   handle.style.cssText = `
-    position: sticky;
+    position: absolute;
     z-index: 1000;
     opacity: 0.5;
     background-color: var(--color-resize-handle, #888);
@@ -102,7 +102,8 @@ export const resizable = (args: Args) => {
   handle.addEventListener('mousedown', onResizeStart)
 
   dom.style.position = 'relative'
-  dom.style.overflow = 'auto'
+  dom.style.overflow = 'hidden'
+
   dom.append(element)
   dom.append(handle)
 
