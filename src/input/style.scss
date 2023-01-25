@@ -1,0 +1,113 @@
+.pcui-input-element {
+  display: inline-block;
+  border: 1px solid var(--bg-darker);
+  border-radius: 2px;
+  box-sizing: border-box;
+  margin: var(--element-margin);
+  min-height: 24px;
+  height: 24px;
+  background-color: var(--bg-dark);
+  vertical-align: top;
+  transition: color 100ms, background-color 100ms, box-shadow 100ms;
+  position: relative;
+  color: var(--text-secondary);
+
+  > input {
+      height: 100%;
+      width: calc(100% - 16px);
+      padding: 0 var(--element-margin);
+      line-height: 1;
+      color: inherit;
+      background: transparent;
+      border: none;
+      outline: none;
+      box-shadow: none;
+      font-family: var(--font-family);
+      font-weight: normal;
+      font-size: 12px;
+  }
+
+  &::before {
+      color: inherit;
+  }
+}
+
+.pcui-input-element.pcui-multiple-values {
+  &::before {
+      position: absolute;
+      padding: 0 8px;
+      content: '...';
+      white-space: nowrap;
+
+      font-family: var(--font-family);
+      font-weight: normal;
+      font-size: 12px;
+
+      top: 5px;
+  }
+}
+
+// focus / hover states
+.pcui-input-element:not(.pcui-disabled, .pcui-readonly) {
+  &:hover {
+      background-color: var(--bg-darker);
+      color: var(--text-primary);
+  }
+
+  &:not(.pcui-error):hover {
+      box-shadow: var(--element-shadow-hover);
+  }
+
+  &.pcui-focus {
+      background-color: var(--bg-darkest);
+      box-shadow: var(--element-shadow-active);
+  }
+}
+
+.pcui-input-element {
+  &.pcui-focus,
+  &:hover {
+      &::after,
+      &::before {
+          display: none;
+      }
+  }
+}
+
+// readonly state
+.pcui-input-element.pcui-readonly {
+  // background-color: transparentize($color: $bcg-dark, $amount: 1 - $element-opacity-readonly);
+  // background-color: ;
+  border-color: transparent;
+}
+
+// disabled state
+.pcui-input-element.pcui-disabled {
+  color: var(--text-darkest);
+}
+
+// error state
+.pcui-input-element.pcui-error {
+  color: var(--text-secondary);
+  box-shadow: var(--element-shadow-error);
+}
+
+// placeholder
+.pcui-input-element[placeholder] {
+  position: relative;
+
+  &::after {
+      content: attr(placeholder);
+      background-color: var(--bg-dark);
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 0 8px;
+      line-height: 22px;
+      font-size: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+      color: var(--element-color-placeholder);
+      pointer-events: none;
+  }
+}

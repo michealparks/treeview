@@ -1,15 +1,9 @@
-/* eslint-disable require-unicode-regexp */
-/* eslint-disable prefer-named-capture-group */
 /* eslint-disable no-underscore-dangle */
-
-import type { Node } from './node'
-import type { TreeViewItem } from './item'
-
 /*
  * Calculate, how many string `a`
  * requires edits, to become string `b`
  */
-export const searchStringEditDistance = (a: string, b: string) => {
+const searchStringEditDistance = (a: string, b: string): number => {
   /*
    * Levenshtein distance
    * https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#JavaScript
@@ -17,38 +11,29 @@ export const searchStringEditDistance = (a: string, b: string) => {
   if (a.length === 0) {
     return b.length
   }
-
   if (b.length === 0) {
     return a.length
   }
-
   if (a === b) {
     return 0
   }
 
-  let i = 0
-  let j = 0
-  let il = 0
-  let jl = 0
-  const matrix = []
+  const matrix: number[][] = []
 
-  for (i = 0, il = b.length; i <= il; i += 1) {
+  for (let i = 0; i <= b.length; i++) {
     matrix[i] = [i]
   }
 
-  for (i = 0, il = a.length; i <= il; i += 1) {
-    matrix[0][i] = i
+  for (let j = 0; j <= a.length; j++) {
+    matrix[0][j] = j
   }
 
-  for (i = 1, il = b.length; i <= il; i += 1) {
-    for (j = 1, jl = a.length; j <= jl; j += 1) {
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
       if (b.charAt(i - 1) === a.charAt(j - 1)) {
         matrix[i][j] = matrix[i - 1][j - 1]
       } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1,
-          Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
-        )
+        matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1))
       }
     }
   }
@@ -61,22 +46,21 @@ export const searchStringEditDistance = (a: string, b: string) => {
  * Calculate, how many characters string `b`
  * contains of a string `a`
  */
-export const searchCharsContains = (a: string, b: string) => {
+const searchCharsContains = (a: string, b: string): number => {
   if (a === b) {
     return a.length
   }
 
   let contains = 0
-  const ind: Record<string, boolean> = { }
-  let i
+  const ind = new Set<string>()
 
-  for (i = 0; i < b.length; i += 1) {
-    ind[b.charAt(i)] = true
+  for (let i = 0; i < b.length; i++) {
+    ind.add(b.charAt(i))
   }
 
-  for (i = 0; i < a.length; i += 1) {
-    if (ind[a.charAt(i)]) {
-      contains += 1
+  for (let i = 0; i < a.length; i++) {
+    if (ind.has(a.charAt(i))) {
+      contains++
     }
   }
 
@@ -85,26 +69,24 @@ export const searchCharsContains = (a: string, b: string) => {
 
 
 // Tokenize string into array of tokens
-export const searchStringTokenize = (name: string) => {
-  const tokens = []
+const searchStringTokenize = (name: string): string[] => {
+  const tokens: string[] = []
 
   /*
    * CamelCase
    * upperCASE123
    */
-  const string = name
-    .replace(/([^A-Z])([A-Z][^A-Z])/g, '$1 $2')
-    .replace(/([A-Z0-9]{2,})/g, ' $1')
+  const string = name.replace(/([^A-Z])([A-Z][^A-Z])/g, '$1 $2').replace(/([A-Z0-9]{2,})/g, ' $1')
 
   /*
    * Space notation
    * dash-notation
    * underscore_notation
    */
-  const parts = string.split(/(\s|-|_)/g)
+  const parts = string.split(/(\s|\-|_)/g)
 
   // Filter valid tokens
-  for (let i = 0, l = parts.length; i < l; i += 1) {
+  for (let i = 0; i < parts.length; i++) {
     parts[i] = parts[i].toLowerCase().trim()
     if (parts[i] && parts[i] !== '-' && parts[i] !== '_') {
       tokens.push(parts[i])
@@ -114,27 +96,34 @@ export const searchStringTokenize = (name: string) => {
   return tokens
 }
 
-interface Item {
-  subFull: number
-  edits: number
-  sub: number
-  name: string
-  tokens: string[]
-  item: Node
+interface SearchRecord<Type> {
+  name: string;
+  item: Type;
+  tokens: string[];
+  edits: number;
+  subFull: number;
+  sub: number;
 }
 
-interface Args {
-  containsCharsTolerance?: number
-  editsDistanceTolerance?: number
-  limitResults?: number
+interface SearchArgs {
+  /**
+   * Tolerance for how many characters of the search string must be contained in the item name. Default is 0.5.
+   */
+  containsCharsTolerance?: number;
+  /**
+   * Tolerance for how many edits are allowed between the search string and the item name. Default is 0.5.
+   */
+  editsDistanceTolerance?: number;
+  /**
+   * Limit the number of results. If not set, all results will be returned.
+   */
+  limitResults?: number;
 }
 
-const _searchItems = (items: Item[], search: string, args: Args) => {
-  const results = []
+const _searchItems = <Type>(items: SearchRecord<Type>[], search: string, args: Readonly<SearchArgs>): SearchRecord<Type>[] => {
+  const results: SearchRecord<Type>[] = []
 
-  for (let i = 0, l = items.length; i < l; i += 1) {
-    const item = items[i]
-
+  for (const item of items) {
     // Direct hit
     if (item.subFull !== Infinity) {
       results.push(item)
@@ -148,7 +137,7 @@ const _searchItems = (items: Item[], search: string, args: Args) => {
       }
 
       continue
-    } else if (item.name === search || item.name.indexOf(search) === 0) {
+    } else if (item.name === search || item.name.startsWith(search)) {
       results.push(item)
 
       if (item.edits === Infinity) {
@@ -164,7 +153,7 @@ const _searchItems = (items: Item[], search: string, args: Args) => {
 
     // Check if name contains enough of search characters
     const contains = searchCharsContains(search, item.name)
-    if (contains / search.length < args.containsCharsTolerance!) {
+    if (contains / search.length < (args.containsCharsTolerance ?? 0)) {
       continue
     }
 
@@ -172,7 +161,7 @@ const _searchItems = (items: Item[], search: string, args: Args) => {
     let subCandidate = Infinity
 
     // For each token
-    for (let t = 0; t < item.tokens.length; t += 1) {
+    for (let t = 0; t < item.tokens.length; t++) {
       // Direct token match
       if (item.tokens[t] === search) {
         editsCandidate = 0
@@ -189,7 +178,7 @@ const _searchItems = (items: Item[], search: string, args: Args) => {
         continue
       } else if (subCandidate === Infinity && edits < editsCandidate) {
         // New edits candidate, not a substring of a token
-        if ((edits / Math.max(search.length, item.tokens[t].length)) <= args.editsDistanceTolerance!) {
+        if ((edits / Math.max(search.length, item.tokens[t].length)) <= (args.editsDistanceTolerance ?? 0)) {
           // Check if edits tolerance is satisfied
           editsCandidate = edits
         }
@@ -210,30 +199,31 @@ const _searchItems = (items: Item[], search: string, args: Args) => {
   return results
 }
 
-/*
- * Perform search through items
- * items is an array with arrays of two values
- * where first value is a string to be searched by
- * and second value is an object to be found
+/**
+ * Perform search through items.
  *
- * [
- *     [ 'camera', {object} ],
- *     [ 'New Entity', {object} ],
- *     [ 'Sun', {object} ]
- * ]
- *
+ * @param items - Array of tuples where the first value is a string to be searched by and the
+ * second value is an object to be found.
+ * @param search - String to search for.
+ * @param args - Search arguments.
+ * @returns Array of found items.
+ * @example
+ * const items = [
+ *     ['Item 1', { id: 1 }],
+ *     ['Item 2', { id: 2 }],
+ *     ['Item 3', { id: 3 }],
+ * ];
+ * const results = searchItems(items, 'item');
+ * // results = [{ id: 1 }, { id: 2 }, { id: 3 }]
  */
-export const searchItems = (items: [string, TreeViewItem][], s: string, args: Args = {}) => {
-  let i = 0
-  let l = 0
+export const searchItems = <Type>(items: [string, Type][], search = '', args: SearchArgs = {}): Type[] => {
+  search = search.toLowerCase().trim()
 
-  const normalized = (s || '').toLowerCase().trim()
-
-  if (!normalized) {
+  if (!search) {
     return []
   }
 
-  const searchTokens = searchStringTokenize(normalized)
+  const searchTokens = searchStringTokenize(search)
   if (!searchTokens.length) {
     return []
   }
@@ -241,31 +231,29 @@ export const searchItems = (items: [string, TreeViewItem][], s: string, args: Ar
   args.containsCharsTolerance ??= 0.5
   args.editsDistanceTolerance ??= 0.5
 
-  let records: Item[] = []
+  let records: SearchRecord<Type>[] = []
 
-  for (i = 0, l = items.length; i < l; i += 1) {
-    const subInd = items[i][0]
-      .toLowerCase()
-      .trim()
-      .indexOf(normalized)
+  for (const item of items) {
+    const subInd = item[0].toLowerCase().trim()
+      .indexOf(search)
 
     records.push({
+      name: item[0],
+      item: item[1],
+      tokens: searchStringTokenize(item[0]),
       edits: Infinity,
-      item: items[i][1],
-      name: items[i][0],
+      subFull: (subInd !== -1) ? subInd : Infinity,
       sub: Infinity,
-      subFull: (subInd === -1) ? Infinity : subInd,
-      tokens: searchStringTokenize(items[i][0]),
     })
   }
 
   // Search each token
-  for (i = 0, l = searchTokens.length; i < l; i += 1) {
+  for (let i = 0; i < searchTokens.length; i++) {
     records = _searchItems(records, searchTokens[i], args)
   }
 
   // Sort result first by substring? then by edits number
-  records.sort((a, b) => {
+  records.sort((a: SearchRecord<Type>, b: SearchRecord<Type>) => {
     if (a.subFull !== b.subFull) {
       return a.subFull - b.subFull
     } else if (a.sub !== b.sub) {
@@ -276,17 +264,13 @@ export const searchItems = (items: [string, TreeViewItem][], s: string, args: Ar
     return a.name.length - b.name.length
   })
 
-  const results: Node[] = []
-
   // Return only items without match information
-  for (i = 0, l = records.length; i < l; i += 1) {
-    results[i] = records[i].item
-  }
+  let recordItems = records.map((record: SearchRecord<Type>) => record.item)
 
   // Limit number of results
-  if (args.limitResults !== undefined && results.length > args.limitResults) {
-    return results.slice(0, args.limitResults)
+  if (args.hasOwnProperty('limitResults') && recordItems.length > (args.limitResults ?? 0)) {
+    recordItems = recordItems.slice(0, args.limitResults)
   }
 
-  return results
+  return recordItems
 }

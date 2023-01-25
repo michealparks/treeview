@@ -1,3 +1,4 @@
-export { resizable } from './resizable'
+import './main.scss'
+
 export { TreeView } from './treeview'
-export { TreeViewItem } from './item'
+export { TreeViewItem } from './treeview-item'

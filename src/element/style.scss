@@ -1,0 +1,34 @@
+// Element styling
+@keyframes pcui-flash-animation {
+  from {
+    outline-color: var(--text-active);
+  }
+  to {
+    outline-color: rgba(var(--text-active), 0);
+  }
+}
+
+.pcui-element {
+  font-weight: normal;
+  font-style: normal;
+
+  border: 0 solid var(--border-primary);
+
+  &.flash {
+      outline: 1px solid var(--text-active);
+      animation: pcui-flash-animation 200ms ease-in-out forwards;
+  }
+
+  &:focus {
+      outline: none;
+  }
+
+  // remove dotted border on focused elements in firefox
+  &::-moz-focus-inner {
+      border: 0;
+  }
+}
+
+.pcui-element.pcui-hidden {
+  display: none;
+}
