@@ -1,11 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 import './style.scss'
 import * as pcuiClass from '../class'
-import type { BindingBase } from '../binding'
 import type { EventHandle } from '../event-handle'
 import { Events } from '../events'
-// @ts-expect-error todo
-import type { Observer } from '../observer'
 
 const CLASS_ELEMENT = 'pcui-element'
 
@@ -32,16 +29,17 @@ export interface IBindable {
    */
   set value(values: any)
   get value(): any
+
   /**
    * Gets / sets multiple values to the Element. It is up to the Element to determine how to display them.
    */
   set values(values: any[])
   get values(): any[]
+
   /**
    * Gets / sets whether the input should flash on changes.
    */
-  set renderChanges(value: boolean)
-  get renderChanges(): boolean
+  renderChanges: boolean
 }
 
 export interface IBindableArgs {
@@ -121,10 +119,6 @@ export interface ElementArgs {
    */
   dom?: HTMLElement | string
   /**
-   * A binding to use with this {@link Element}.
-   */
-  binding?: BindingBase
-  /**
    * If provided and the {@link Element} is clickable, this function will be called each time the element is clicked.
    */
   onClick?: () => void
@@ -140,10 +134,6 @@ export interface ElementArgs {
    * Sets the parent {@link Element}.
    */
   parent?: Element
-  /**
-   * Links the observer attribute at the path location in the given observer to this {@link Element}.
-   */
-  link?: { observer: Observer[]|Observer, path: string[]|string }
   /**
    * The id attribute of this {@link Element}'s HTMLElement.
    */
@@ -378,7 +368,6 @@ export class Element extends Events {
   protected _hiddenParents: boolean
   protected _flashTimeout: number | null = null
   protected _suppressChange = false
-  protected _binding: BindingBase | null = null
   protected _ignoreParent = false
   protected _enabled = true
   protected _readOnly = false
@@ -446,11 +435,6 @@ export class Element extends Events {
         this[key] = args[key]
       }
     }
-
-    // Set the binding object
-    if (args.binding) {
-      this.binding = args.binding
-    }
   }
 
   /**
@@ -463,18 +447,13 @@ export class Element extends Events {
 
     this._destroyed = true
 
-    if (this.binding) {
-      this.binding = null
-    } else {
-      this.unlink()
-    }
-
     if (this.parent) {
       const parent = this.parent
 
       for (const event of this._eventsParent) {
         event.unbind()
       }
+
       this._eventsParent.length = 0
 
       /*
@@ -531,27 +510,6 @@ export class Element extends Events {
     this.emit('destroy', dom, this)
 
     this.unbind()
-  }
-
-  /**
-   * Links the specified observers and paths to the Element's data binding.
-   *
-   * @param observers - An array of observers or a single observer.
-   * @param paths - A path for the observer(s) or an array of paths that maps to each separate observer.
-   */
-  link (observers: Observer|Observer[], paths: string|string[]) {
-    if (this._binding) {
-      this._binding.link(observers, paths)
-    }
-  }
-
-  /**
-   * Unlinks the Element from its observers.
-   */
-  unlink () {
-    if (this._binding) {
-      this._binding.unlink()
-    }
   }
 
   /**
@@ -888,42 +846,6 @@ export class Element extends Events {
 
   get tabIndex (): number {
     return this._dom.tabIndex
-  }
-
-  /**
-   * Gets / sets the Binding object for the element.
-   */
-  set binding (value: BindingBase | null) {
-    if (this._binding === value) {
-      return
-    }
-
-    let prevObservers
-    let prevPaths
-
-    if (this._binding) {
-      prevObservers = this._binding.observers
-      prevPaths = this._binding.paths
-
-      this.unlink()
-      // @ts-expect-error todo
-      this._binding.element = null
-      this._binding = null
-    }
-
-    this._binding = value
-
-    if (this._binding) {
-      // @ts-expect-error todo
-      this._binding.element = this
-      if (prevObservers && prevPaths) {
-        this.link(prevObservers, prevPaths)
-      }
-    }
-  }
-
-  get binding (): BindingBase | null {
-    return this._binding
   }
 
   get destroyed (): boolean {

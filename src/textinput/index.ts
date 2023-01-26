@@ -47,10 +47,6 @@ export class TextInput extends InputElement {
     }
 
     this.emit('change', this.value)
-
-    if (this._binding) {
-      this._binding.setValue(this.value)
-    }
   }
 
   protected _updateValue (value: string | string[] | null) {
@@ -97,10 +93,6 @@ export class TextInput extends InputElement {
     if (changed) {
       // Reset error
       this.error = false
-    }
-
-    if (changed && this._binding) {
-      this._binding.setValue(value)
     }
   }
 

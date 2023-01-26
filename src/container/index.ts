@@ -219,7 +219,7 @@ export class Container extends Element {
     this._domContent.appendChild(dom)
     const referenceDom = referenceElement && getDomFromElement(referenceElement)
 
-    this._domContent.insertBefore(dom, referenceDom)
+    this._domContent.insertBefore(dom, referenceDom as Node)
 
     this._onAppendChild(element)
   }

@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import './style.scss'
 import * as pcuiClass from '../class'
 import { Element, ElementArgs, IBindable, IBindableArgs, IFocusable, IPlaceholder, IPlaceholderArgs } from '../element'
@@ -33,11 +34,11 @@ export interface InputElementArgs extends ElementArgs, IBindableArgs, IPlacehold
 export abstract class InputElement extends Element implements IBindable, IFocusable, IPlaceholder {
   protected _domInput: HTMLInputElement
   protected _suspendInputChangeEvt: boolean
-  protected _prevValue: string
-  protected _keyChange: boolean
-  protected _renderChanges: boolean
-  protected _blurOnEnter: boolean
-  protected _blurOnEscape: boolean
+  protected _prevValue: string | null
+  protected _keyChange = false
+  protected _renderChanges = false
+  protected _blurOnEnter = true
+  protected _blurOnEscape = true
   protected _onInputKeyDownEvt: (evt: KeyboardEvent) => void
   protected _onInputChangeEvt: (evt: Event) => void
 
@@ -74,6 +75,7 @@ export abstract class InputElement extends Element implements IBindable, IFocusa
     if (args.value !== undefined) {
       this._domInput.value = args.value
     }
+
     this.placeholder = args.placeholder ?? ''
     this.renderChanges = args.renderChanges ?? false
     this.blurOnEnter = args.blurOnEnter ?? true
@@ -93,7 +95,7 @@ export abstract class InputElement extends Element implements IBindable, IFocusa
     this._updateInputReadOnly()
   }
 
-  destroy () {
+  override destroy () {
     if (this._destroyed) {
       return
     }
@@ -135,7 +137,7 @@ export abstract class InputElement extends Element implements IBindable, IFocusa
     } else if (evt.key === 'Escape') {
       this._suspendInputChangeEvt = true
       const prev = this._domInput.value
-      this._domInput.value = this._prevValue
+      this._domInput.value = this._prevValue ?? ''
       this._suspendInputChangeEvt = false
 
       // Manually fire change event
@@ -151,7 +153,7 @@ export abstract class InputElement extends Element implements IBindable, IFocusa
     this.emit('keydown', evt)
   }
 
-  protected _onInputChange (evt: Event) {}
+  protected _onInputChange (_evt: Event) {}
 
   protected _onInputKeyUp = (evt: KeyboardEvent) => {
     if (evt.key !== 'Escape') {
@@ -161,7 +163,7 @@ export abstract class InputElement extends Element implements IBindable, IFocusa
     this.emit('keyup', evt)
   }
 
-  protected _onInputCtxMenu = (evt: MouseEvent) => {
+  protected _onInputCtxMenu = (_evt: MouseEvent) => {
     this._domInput.select()
   }
 

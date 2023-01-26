@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import './style.scss'
 import * as pcuiClass from '../class'
 import { Element, ElementArgs, IBindable, IBindableArgs, IFlexArgs, IPlaceholder, IPlaceholderArgs } from '../element'
@@ -8,32 +9,32 @@ const CLASS_LABEL = 'pcui-label'
  * The arguments for the {@link Label} constructor.
  */
 export interface LabelArgs extends ElementArgs, IBindableArgs, IPlaceholderArgs, IFlexArgs {
-    /**
-     * Sets the text of the Label. Defaults to ''.
-     */
-    text?: string,
-    /**
-     * If `true`, the {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML innerHTML} property will be
-     * used to set the text. Otherwise, {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent textContent}
-     * will be used instead. Defaults to `false`.
-     */
-    unsafe?: boolean,
-    /**
-     * If `true` then use the text of the label as the native HTML tooltip. Defaults to `false`.
-     */
-    nativeTooltip?: boolean,
-    /**
-     * If `true` then the label can be clicked to select text. Defaults to `false`.
-     */
-    allowTextSelection?: boolean,
-    /**
-     * The DOM element or its type to use for this component. Defaults to 'span'.
-     */
-    dom?: HTMLElement | string,
-    /**
-     * Sets the value of the Label. Defaults to ''.
-     */
-    value?: string
+  /**
+   * Sets the text of the Label. Defaults to ''.
+   */
+  text?: string,
+  /**
+   * If `true`, the {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML innerHTML} property will be
+   * used to set the text. Otherwise, {@link https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent textContent}
+   * will be used instead. Defaults to `false`.
+   */
+  unsafe?: boolean,
+  /**
+   * If `true` then use the text of the label as the native HTML tooltip. Defaults to `false`.
+   */
+  nativeTooltip?: boolean,
+  /**
+   * If `true` then the label can be clicked to select text. Defaults to `false`.
+   */
+  allowTextSelection?: boolean,
+  /**
+   * The DOM element or its type to use for this component. Defaults to 'span'.
+   */
+  dom?: HTMLElement | string,
+  /**
+   * Sets the value of the Label. Defaults to ''.
+   */
+  value?: string
 }
 
 /**
@@ -41,8 +42,8 @@ export interface LabelArgs extends ElementArgs, IBindableArgs, IPlaceholderArgs,
  */
 export class Label extends Element implements IPlaceholder, IBindable {
   protected _unsafe: boolean
-  protected _text: string
-  protected _renderChanges: boolean
+  protected _text = ''
+  renderChanges = false
 
   constructor (args: Readonly<LabelArgs> = {}) {
     super({ dom: 'span', ...args })
@@ -59,9 +60,8 @@ export class Label extends Element implements IPlaceholder, IBindable {
     if (args.nativeTooltip) {
       this.dom.title = this.text
     }
-    this.placeholder = args.placeholder
-
-    this.renderChanges = args.renderChanges
+    this.placeholder = args.placeholder ?? null
+    this.renderChanges = args.renderChanges ?? false
 
     this.on('change', () => {
       if (this.renderChanges) {
@@ -93,12 +93,8 @@ export class Label extends Element implements IPlaceholder, IBindable {
   /**
    * Gets / sets the text of the Label.
    */
-  set text (value = '') {
-    const changed = this._updateText(value)
-
-    if (changed && this._binding) {
-      this._binding.setValue(value)
-    }
+  set text (value: string | null) {
+    this._updateText(value ?? '')
   }
 
   get text (): string {
@@ -125,7 +121,7 @@ export class Label extends Element implements IPlaceholder, IBindable {
     }
   }
 
-  set placeholder (value: string) {
+  set placeholder (value: string | null) {
     if (value) {
       this.dom.setAttribute('placeholder', value)
     } else {
@@ -134,14 +130,6 @@ export class Label extends Element implements IPlaceholder, IBindable {
   }
 
   get placeholder (): string {
-    return this.dom.getAttribute('placeholder')
-  }
-
-  set renderChanges (value: boolean) {
-    this._renderChanges = value
-  }
-
-  get renderChanges (): boolean {
-    return this._renderChanges
+    return this.dom.getAttribute('placeholder') ?? ''
   }
 }

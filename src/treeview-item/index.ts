@@ -353,11 +353,11 @@ export class TreeViewItem extends Container {
     this._treeView?._onContextMenu?.(evt, this)
   }
 
-  protected _onContentFocus = (evt: FocusEvent) => {
+  protected _onContentFocus = (_evt: FocusEvent) => {
     this.emit('focus')
   }
 
-  protected _onContentBlur = (evt: FocusEvent) => {
+  protected _onContentBlur = (_evt: FocusEvent) => {
     this.emit('blur')
   }
 
@@ -629,7 +629,7 @@ export class TreeViewItem extends Container {
    * The icon shown before the text in the TreeViewItem.
    */
   set icon (value) {
-    if (this._icon === value || !value.match(/^E[0-9]{0,4}$/u)) {
+    if (this._icon === value || (value && !value.match(/^E[0-9]{0,4}$/u))) {
       return
     }
     this._icon = value
