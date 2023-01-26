@@ -3,6 +3,7 @@
 import { Container, ContainerArgs } from '../container'
 import { Element } from '../element'
 import { TreeViewItem } from '../treeview-item'
+import css from '../main.scss?inline'
 import { searchItems } from '../search'
 
 const CLASS_DRAGGED_ITEM = 'tv-treeview-item-dragged'
@@ -260,6 +261,10 @@ export class TreeView extends Container {
    */
   constructor (args: Readonly<TreeViewArgs> = {}) {
     super(args)
+
+    const style = document.createElement('style')
+    style.innerHTML = css
+    this.dom.append(style)
 
     this.class.add('tv-treeview')
 
