@@ -7,6 +7,10 @@ body {
   background: #ddd;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body, input {
   font-family: monospace;
 }

@@ -1,13 +1,13 @@
 import './main.css'
 import { Pane, type TpChangeEvent } from 'tweakpane'
-import { TreeView, TreeViewItem } from '../src/main'
+import { TreeViewWebComponent, TreeViewItem } from '../src/main'
 
-const treeview = new TreeView()
+const treeview = new TreeViewWebComponent()
 treeview.dom.classList.add('sticky', 'top-0')
 treeview.scrollable = true
 treeview.allowRenaming = true
 
-document.body.append(treeview.dom)
+document.body.append(treeview.wc)
 
 const root = new TreeViewItem({ text: `root` })
 treeview.append(root)
