@@ -285,6 +285,7 @@ export class TreeView extends Container {
 
     this._dragHandle.dom.addEventListener('mousemove', this._onDragMove)
     this._dragHandle.on('destroy', (dom: Node) => {
+      // @ts-expect-error todo
       dom.removeEventListener('mousemove', this._onDragMove)
     })
   }
@@ -417,7 +418,7 @@ export class TreeView extends Container {
     item.selected = false
 
     // Do the same for all children of the element
-    item.forEachChild((child) => {
+    item.forEachChild((child, _index) => {
       if (child instanceof TreeViewItem) {
         this._onRemoveTreeViewItem(child)
       }

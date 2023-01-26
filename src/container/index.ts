@@ -593,7 +593,7 @@ export class Container extends Element {
    *
    * @param fn - The function to call for each child element.
    */
-  forEachChild (fn: (child: Element, index: number) => undefined | false) {
+  forEachChild (fn: (child: Element, index: number) => void | false) {
     for (let i = 0; i < this.dom.childNodes.length; i += 1) {
       const node = this.dom.childNodes[i].ui
       if (node) {
