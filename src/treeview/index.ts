@@ -521,7 +521,7 @@ export class TreeView extends Container {
    *
    * @param fn - The function to call. The function takes the TreeViewItem as an argument.
    */
-  protected _traverseDepthFirst (fn: (item: TreeViewItem) => void) {
+  protected traverseDepthFirst (fn: (item: TreeViewItem) => void) {
     const traverse = (item: Element) => {
       if (!item || !(item instanceof TreeViewItem)) {
         return
@@ -551,7 +551,7 @@ export class TreeView extends Container {
     const treeOrder = new Map<TreeViewItem, number>()
     let order = 0
 
-    this._traverseDepthFirst((item: TreeViewItem) => {
+    this.traverseDepthFirst((item: TreeViewItem) => {
       order += 1
       treeOrder.set(item, order)
     })
@@ -1075,7 +1075,7 @@ export class TreeView extends Container {
     this.class.add(CLASS_FILTERING)
 
     const search: [string, TreeViewItem][] = []
-    this._traverseDepthFirst((item) => {
+    this.traverseDepthFirst((item) => {
       search.push([item.text, item])
     })
 
