@@ -1,4 +1,4 @@
-.pcui-input-element {
+.tv-input-element {
   display: inline-block;
   border: 1px solid var(--bg-darker);
   border-radius: 2px;
@@ -32,7 +32,7 @@
   }
 }
 
-.pcui-input-element.pcui-multiple-values {
+.tv-input-element.tv-multiple-values {
   &::before {
       position: absolute;
       padding: 0 8px;
@@ -48,24 +48,24 @@
 }
 
 // focus / hover states
-.pcui-input-element:not(.pcui-disabled, .pcui-readonly) {
+.tv-input-element:not(.tv-disabled, .tv-readonly) {
   &:hover {
       background-color: var(--bg-darker);
       color: var(--text-primary);
   }
 
-  &:not(.pcui-error):hover {
+  &:not(.tv-error):hover {
       box-shadow: var(--element-shadow-hover);
   }
 
-  &.pcui-focus {
+  &.tv-focus {
       background-color: var(--bg-darkest);
       box-shadow: var(--element-shadow-active);
   }
 }
 
-.pcui-input-element {
-  &.pcui-focus,
+.tv-input-element {
+  &.tv-focus,
   &:hover {
       &::after,
       &::before {
@@ -75,25 +75,25 @@
 }
 
 // readonly state
-.pcui-input-element.pcui-readonly {
+.tv-input-element.tv-readonly {
   // background-color: transparentize($color: $bcg-dark, $amount: 1 - $element-opacity-readonly);
   // background-color: ;
   border-color: transparent;
 }
 
 // disabled state
-.pcui-input-element.pcui-disabled {
+.tv-input-element.tv-disabled {
   color: var(--text-darkest);
 }
 
 // error state
-.pcui-input-element.pcui-error {
+.tv-input-element.tv-error {
   color: var(--text-secondary);
   box-shadow: var(--element-shadow-error);
 }
 
 // placeholder
-.pcui-input-element[placeholder] {
+.tv-input-element[placeholder] {
   position: relative;
 
   &::after {

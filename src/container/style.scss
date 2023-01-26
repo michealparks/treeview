@@ -1,5 +1,5 @@
 // container element
-.pcui-container {
+.tv-container {
   // containers should be relative to each other
   position: relative;
   min-width: 0; // this fixes a lot of flex / grid issues
@@ -7,9 +7,9 @@
 }
 
 // resizable content
-.pcui-container.pcui-resizable {
+.tv-container.tv-resizable {
   // resizable handle
-  > .pcui-resizable-handle {
+  > .tv-resizable-handle {
     position: absolute;
     z-index: 1;
     opacity: 0;
@@ -21,14 +21,14 @@
   }
 
   // resizable handle state while resizing
-  &.pcui-resizable-resizing > .pcui-resizable-handle {
+  &.tv-resizable-resizing > .tv-resizable-handle {
     opacity: 1;
   }
 
   // horizontal handle
-  &.pcui-resizable-left,
-  &.pcui-resizable-right {
-    > .pcui-resizable-handle {
+  &.tv-resizable-left,
+  &.tv-resizable-right {
+    > .tv-resizable-handle {
     top: 0;
     bottom: 0;
     width: 1px;
@@ -37,24 +37,24 @@
     }
   }
 
-  &.pcui-resizable-left {
-    > .pcui-resizable-handle {
+  &.tv-resizable-left {
+    > .tv-resizable-handle {
     left: 0;
     border-left: 3px solid var(--bg-darkest);
     }
   }
 
-  &.pcui-resizable-right {
-    > .pcui-resizable-handle {
+  &.tv-resizable-right {
+    > .tv-resizable-handle {
     right: 0;
     border-right: 3px solid var(--bg-darkest);
     }
   }
 
   // vertical handle
-  &.pcui-resizable-top,
-  &.pcui-resizable-bottom {
-    > .pcui-resizable-handle {
+  &.tv-resizable-top,
+  &.tv-resizable-bottom {
+    > .tv-resizable-handle {
         left: 0;
         right: 0;
         width: auto;
@@ -63,29 +63,29 @@
     }
   }
 
-  &.pcui-resizable-top {
-    > .pcui-resizable-handle {
+  &.tv-resizable-top {
+    > .tv-resizable-handle {
       top: 0;
       border-top: 3px solid var(--bg-darkest);
     }
   }
 
-  &.pcui-resizable-bottom {
-    > .pcui-resizable-handle {
+  &.tv-resizable-bottom {
+    > .tv-resizable-handle {
       bottom: 0;
       border-bottom: 3px solid var(--bg-darkest);
     }
   }
 }
 
-.pcui-container-dragged {
+.tv-container-dragged {
   outline: 2px solid var(--text-primary);
   box-sizing: border-box;
   opacity: 0.7;
   z-index: 1;
 }
 
-.pcui-container-dragged-child {
+.tv-container-dragged-child {
   outline: 1px dotted var(--text-active);
   box-sizing: border-box;
 }

@@ -26,32 +26,36 @@
   --element-opacity-readonly: 0.7;
 }
 
-.pcui-no-select {
+@import './container/style.scss';
+@import './element/style.scss';
+@import './input/style.scss';
+@import './label/style.scss';
+@import './treeview/style.scss';
+@import './treeview-item/style.scss';
+
+.tv-no-select {
   -webkit-touch-callout: none;
   user-select: none;
 }
 
-// flex container
-.pcui-flex {
-  &:not(.pcui-hidden) {
-      display: flex;
+.tv-flex {
+  &:not(.tv-hidden) {
+    display: flex;
   }
 
   flex-direction: column;
 }
 
-// grid container
-.pcui-grid {
+.tv-grid {
   display: grid;
 }
 
-// scrollable element
-.pcui-scrollable {
+.tv-scrollable {
   // show scrollbars automatically
   overflow: auto;
 }
 
-.pcui-hidden {
+.tv-hidden {
   display: none;
 }
 

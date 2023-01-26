@@ -93,10 +93,10 @@ export class History extends Events {
     if (this.add(action)) {
       // Execute an action - don't allow history actions till it finishes
       try {
-        this.executing++
+        this.executing += 1
         await action.redo()
       } finally {
-        this.executing--
+        this.executing -= 1
       }
     }
   }
@@ -111,7 +111,7 @@ export class History extends Events {
 
     const name = this.currentAction.name
     const undo = this.currentAction.undo
-    this._currentActionIndex--
+    this._currentActionIndex -= 1
 
     this.emit('undo', name)
 
@@ -123,13 +123,13 @@ export class History extends Events {
 
     // Execute an undo action - don't allow history actions till it finishes
     try {
-      this.executing++
+      this.executing += 1
       await undo()
     } catch (ex) {
-      console.info('%c(pcui.History#undo)', 'color: #f00')
+      console.info('%c(tv.History#undo)', 'color: #f00')
       console.log(ex.stack)
     } finally {
-      this.executing--
+      this.executing -= 1
     }
   }
 
@@ -141,7 +141,7 @@ export class History extends Events {
       return
     }
 
-    this._currentActionIndex++
+    this._currentActionIndex += 1
     const redo = this.currentAction.redo
     this.emit('redo', this.currentAction.name)
 
@@ -153,13 +153,13 @@ export class History extends Events {
 
     // Execute redo action - don't allow history actions till it finishes
     try {
-      this.executing++
+      this.executing += 1
       await redo()
     } catch (ex) {
-      console.info('%c(pcui.History#redo)', 'color: #f00')
+      console.info('%c(tv.History#redo)', 'color: #f00')
       console.log(ex.stack)
     } finally {
-      this.executing--
+      this.executing -= 1
     }
   }
 

@@ -6,7 +6,7 @@ import { EventHandle } from './event-handle.js'
  */
 export class Events {
   _suspendEvents = false
-  _additionalEmitters: any[] = []
+  _additionalEmitters: Events[] = []
   _events: any
 
   constructor () {
@@ -80,18 +80,18 @@ export class Events {
         try {
           events[i].call(this, ...args)
         } catch (ex) {
-          console.info('%c%s %c(event error)', 'color: #06f', name, 'color: #f00')
+          console.error('%c%s %c(event error)', 'color: #06f', name, 'color: #f00')
           // @ts-expect-error todo
-          console.log(ex.stack)
+          console.error(ex.stack)
         }
       }
     }
 
     if (this._additionalEmitters.length) {
       const emitters = this._additionalEmitters.slice()
-      emitters.forEach((emitter) => {
-        emitter.emit(name, ...args)
-      })
+      for (let i = 0, l = emitters.length; i < l; i += 1) {
+        emitters[i].emit(name, ...args)
+      }
     }
 
     return this

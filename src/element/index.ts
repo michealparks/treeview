@@ -1,10 +1,7 @@
 /* eslint-disable no-underscore-dangle */
-import './style.scss'
-import * as pcuiClass from '../class'
+import * as tvClass from '../class'
 import type { EventHandle } from '../event-handle'
 import { Events } from '../events'
-
-const CLASS_ELEMENT = 'pcui-element'
 
 /*
  * These are properties that are
@@ -398,7 +395,7 @@ export class Element extends Events {
     this._dom.addEventListener('mouseout', this._onMouseOut)
 
     // Add css classes
-    this._dom.classList.add(CLASS_ELEMENT, pcuiClass.FONT_REGULAR)
+    this._dom.classList.add('tv-element', tvClass.FONT_REGULAR)
 
     // Add user classes
     if (args.class) {
@@ -520,10 +517,10 @@ export class Element extends Events {
       return
     }
 
-    this.class.add(pcuiClass.FLASH)
+    this.class.add(tvClass.FLASH)
     this._flashTimeout = window.setTimeout(() => {
       this._flashTimeout = null
-      this.class.remove(pcuiClass.FLASH)
+      this.class.remove(tvClass.FLASH)
     }, 200)
   }
 
@@ -547,9 +544,9 @@ export class Element extends Events {
 
   protected _onEnabledChange (enabled: boolean) {
     if (enabled) {
-      this.class.remove(pcuiClass.DISABLED)
+      this.class.remove(tvClass.DISABLED)
     } else {
-      this.class.add(pcuiClass.DISABLED)
+      this.class.add(tvClass.DISABLED)
     }
 
     this.emit(enabled ? 'enable' : 'disable')
@@ -595,9 +592,9 @@ export class Element extends Events {
 
   protected _onReadOnlyChange (readOnly: boolean) {
     if (readOnly) {
-      this.class.add(pcuiClass.READONLY)
+      this.class.add(tvClass.READONLY)
     } else {
-      this.class.remove(pcuiClass.READONLY)
+      this.class.remove(tvClass.READONLY)
     }
 
     this.emit('readOnly', readOnly)
@@ -731,9 +728,9 @@ export class Element extends Events {
     this._hidden = value
 
     if (value) {
-      this.class.add(pcuiClass.HIDDEN)
+      this.class.add(tvClass.HIDDEN)
     } else {
-      this.class.remove(pcuiClass.HIDDEN)
+      this.class.remove(tvClass.HIDDEN)
     }
 
     this.emit(value ? 'hide' : 'show')
@@ -786,9 +783,9 @@ export class Element extends Events {
     }
     this._hasError = value
     if (value) {
-      this.class.add(pcuiClass.ERROR)
+      this.class.add(tvClass.ERROR)
     } else {
-      this.class.remove(pcuiClass.ERROR)
+      this.class.remove(tvClass.ERROR)
     }
   }
 

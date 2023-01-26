@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import './style.scss'
-import * as pcuiClass from '../class'
+import * as tvClass from '../class'
 import { Element, ElementArgs, IFlexArgs, IParentArgs } from '../element'
 
 const RESIZE_HANDLE_SIZE = 4
@@ -13,10 +12,10 @@ const VALID_RESIZABLE_VALUES = [
   'left',
 ]
 
-const CLASS_RESIZING = `${pcuiClass.RESIZABLE}-resizing`
-const CLASS_RESIZABLE_HANDLE = 'pcui-resizable-handle'
+const CLASS_RESIZING = `${tvClass.RESIZABLE}-resizing`
+const CLASS_RESIZABLE_HANDLE = 'tv-resizable-handle'
 
-const CLASS_DRAGGED = 'pcui-container-dragged'
+const CLASS_DRAGGED = 'tv-container-dragged'
 const CLASS_DRAGGED_CHILD = `${CLASS_DRAGGED}-child`
 
 // Used for backwards compatibility with the legacy ui framework
@@ -140,7 +139,7 @@ export class Container extends Element {
   constructor (args: Readonly<ContainerArgs> = {}) {
     super(args)
 
-    this.class.add('pcui-container')
+    this.class.add('tv-container')
 
     this.domContent = this._dom
     this._domContent = this._dom
@@ -594,7 +593,7 @@ export class Container extends Element {
    *
    * @param fn - The function to call for each child element.
    */
-  forEachChild (fn: (child: Element, index: number) => void | false) {
+  forEachChild (fn: (child: Element, index: number) => undefined | false) {
     for (let i = 0; i < this.dom.childNodes.length; i += 1) {
       const node = this.dom.childNodes[i].ui
       if (node) {
@@ -608,71 +607,6 @@ export class Container extends Element {
   }
 
   /**
-   * If the current node contains a root, recursively append its children to this node
-   * and return it. Otherwise return the current node. Also add each child to the parent
-   * under its keyed name.
-   *
-   * @param node - The current element in the dom structure which must be recursively
-   * traversed and appended to its parent.
-   * @param node.root - The root node of the dom structure.
-   * @param node.children - The children of the root node.
-   * @returns The recursively appended element node.
-   *
-   */
-  protected _buildDomNode (node: { [x: string]: any; root?: any; children?: any; }): Container {
-    const keys = Object.keys(node)
-    let rootNode: Container
-    if (keys.includes('root')) {
-      rootNode = this._buildDomNode(node.root)
-      node.children.forEach((childNode: Node) => {
-        const childNodeElement = this._buildDomNode(childNode)
-        if (childNodeElement !== null) {
-          rootNode.append(childNodeElement)
-        }
-      })
-    } else {
-      rootNode = node[keys[0]]
-      // @ts-expect-error todo
-      this[`_${keys[0]}`] = rootNode
-    }
-    return rootNode
-  }
-
-  /**
-   * Takes an array of pcui elements, each of which can contain their own child elements, and
-   * appends them to this container. These child elements are traversed recursively using
-   * _buildDomNode.
-   *
-   * @param dom - An array of child pcui elements to append to this container.
-   *
-   * @example
-   * buildDom([
-   *     {
-   *         child1: pcui.Label()
-   *     },
-   *     {
-   *         root: {
-   *             container1: pcui.Container()
-   *         },
-   *         children: [
-   *             {
-   *                 child2: pcui.Label()
-   *             },
-   *             {
-   *                 child3: pcui.Label()
-   *             }
-   *         ]
-   *     }
-   * ]);
-   */
-  buildDom (dom: any[]) {
-    dom.forEach((node: any) => {
-      const builtNode = this._buildDomNode(node)
-      this.append(builtNode)
-    })
-  }
-
-  /**
    * Gets / sets whether the Element supports flex layout.
    */
   set flex (value: boolean) {
@@ -683,9 +617,9 @@ export class Container extends Element {
     this._flex = value
 
     if (value) {
-      this.class.add(pcuiClass.FLEX)
+      this.class.add(tvClass.FLEX)
     } else {
-      this.class.remove(pcuiClass.FLEX)
+      this.class.remove(tvClass.FLEX)
     }
   }
 
@@ -704,9 +638,9 @@ export class Container extends Element {
     this._grid = value
 
     if (value) {
-      this.class.add(pcuiClass.GRID)
+      this.class.add(tvClass.GRID)
     } else {
-      this.class.remove(pcuiClass.GRID)
+      this.class.remove(tvClass.GRID)
     }
   }
 
@@ -725,9 +659,9 @@ export class Container extends Element {
     this._scrollable = value
 
     if (value) {
-      this.class.add(pcuiClass.SCROLLABLE)
+      this.class.add(tvClass.SCROLLABLE)
     } else {
-      this.class.remove(pcuiClass.SCROLLABLE)
+      this.class.remove(tvClass.SCROLLABLE)
     }
   }
 
@@ -751,7 +685,7 @@ export class Container extends Element {
 
     // Remove old class
     if (this._resizable) {
-      this.class.remove(`${pcuiClass.RESIZABLE}-${this._resizable}`)
+      this.class.remove(`${tvClass.RESIZABLE}-${this._resizable}`)
     }
 
     this._resizable = value
@@ -759,8 +693,8 @@ export class Container extends Element {
 
     if (value) {
       // Add resize class and create / append resize handle
-      this.class.add(pcuiClass.RESIZABLE)
-      this.class.add(`${pcuiClass.RESIZABLE}-${value}`)
+      this.class.add(tvClass.RESIZABLE)
+      this.class.add(`${tvClass.RESIZABLE}-${value}`)
 
       if (!this._domResizeHandle) {
         this._domResizeHandle = this._createResizeHandle()
@@ -768,7 +702,7 @@ export class Container extends Element {
       this._dom.appendChild(this._domResizeHandle)
     } else {
       // Remove resize class and resize handle
-      this.class.remove(pcuiClass.RESIZABLE)
+      this.class.remove(tvClass.RESIZABLE)
       if (this._domResizeHandle) {
         this._dom.removeChild(this._domResizeHandle)
       }

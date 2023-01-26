@@ -1,9 +1,8 @@
 /* eslint-disable no-underscore-dangle */
-import './style.scss'
-import * as pcuiClass from '../class'
+import * as tvClass from '../class'
 import { Element, ElementArgs, IBindable, IBindableArgs, IFocusable, IPlaceholder, IPlaceholderArgs } from '../element'
 
-const CLASS_INPUT_ELEMENT = 'pcui-input-element'
+const CLASS_INPUT_ELEMENT = 'tv-input-element'
 
 /**
  * The arguments for the {@link InputElement} constructor.
@@ -113,13 +112,13 @@ export abstract class InputElement extends Element implements IBindable, IFocusa
   }
 
   protected _onInputFocus = (evt: FocusEvent) => {
-    this.class.add(pcuiClass.FOCUS)
+    this.class.add(tvClass.FOCUS)
     this.emit('focus', evt)
     this._prevValue = this._domInput.value
   }
 
   protected _onInputBlur = (evt: FocusEvent) => {
-    this.class.remove(pcuiClass.FOCUS)
+    this.class.remove(tvClass.FOCUS)
     this.emit('blur', evt)
   }
 

@@ -1,9 +1,8 @@
 /* eslint-disable no-underscore-dangle */
-import './style.scss'
-import * as pcuiClass from '../class'
+import * as tvClass from '../class'
 import { Element, ElementArgs, IBindable, IBindableArgs, IFlexArgs, IPlaceholder, IPlaceholderArgs } from '../element'
 
-const CLASS_LABEL = 'pcui-label'
+const CLASS_LABEL = 'tv-label'
 
 /**
  * The arguments for the {@link Label} constructor.
@@ -54,7 +53,7 @@ export class Label extends Element implements IPlaceholder, IBindable {
     this.text = args.text ?? args.value ?? ''
 
     if (args.allowTextSelection) {
-      this.class.add(pcuiClass.DEFAULT_MOUSEDOWN)
+      this.class.add(tvClass.DEFAULT_MOUSEDOWN)
     }
 
     if (args.nativeTooltip) {
@@ -71,7 +70,7 @@ export class Label extends Element implements IPlaceholder, IBindable {
   }
 
   protected _updateText (value: string) {
-    this.class.remove(pcuiClass.MULTIPLE_VALUES)
+    this.class.remove(tvClass.MULTIPLE_VALUES)
 
     if (this._text === value) {
       return false
@@ -115,7 +114,7 @@ export class Label extends Element implements IPlaceholder, IBindable {
 
     if (different) {
       this._updateText('')
-      this.class.add(pcuiClass.MULTIPLE_VALUES)
+      this.class.add(tvClass.MULTIPLE_VALUES)
     } else {
       this._updateText(values[0])
     }

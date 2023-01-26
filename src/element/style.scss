@@ -1,5 +1,5 @@
 // Element styling
-@keyframes pcui-flash-animation {
+@keyframes tv-flash-animation {
   from {
     outline-color: var(--text-active);
   }
@@ -8,7 +8,7 @@
   }
 }
 
-.pcui-element {
+.tv-element {
   font-weight: normal;
   font-style: normal;
 
@@ -16,7 +16,7 @@
 
   &.flash {
       outline: 1px solid var(--text-active);
-      animation: pcui-flash-animation 200ms ease-in-out forwards;
+      animation: tv-flash-animation 200ms ease-in-out forwards;
   }
 
   &:focus {
@@ -29,6 +29,6 @@
   }
 }
 
-.pcui-element.pcui-hidden {
+.tv-element.tv-hidden {
   display: none;
 }

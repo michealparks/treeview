@@ -1,16 +1,14 @@
 /* eslint-disable max-depth */
 /* eslint-disable no-underscore-dangle */
-import './style.scss'
 import { Container, ContainerArgs } from '../container'
 import { Element } from '../element'
 import { TreeViewItem } from '../treeview-item'
 import { searchItems } from '../search'
 
-const CLASS_ROOT = 'pcui-treeview'
-const CLASS_DRAGGED_ITEM = `${CLASS_ROOT}-item-dragged`
-const CLASS_DRAGGED_HANDLE = `${CLASS_ROOT}-drag-handle`
-const CLASS_FILTERING = `${CLASS_ROOT}-filtering`
-const CLASS_FILTER_RESULT = `${CLASS_FILTERING}-result`
+const CLASS_DRAGGED_ITEM = 'tv-treeview-item-dragged'
+const CLASS_DRAGGED_HANDLE = 'tv-treeview-drag-handle'
+const CLASS_FILTERING = 'tv-treeview-filtering'
+const CLASS_FILTER_RESULT = 'tv-treeview-filtering-result'
 
 const DRAG_AREA_INSIDE = 'inside'
 const DRAG_AREA_BEFORE = 'before'
@@ -28,7 +26,6 @@ const getChildIndex = (item: TreeViewItem, parent: TreeViewItem) => {
 const openHierarchy = (endItem: TreeViewItem) => {
   endItem.parentsOpen = true
 }
-
 
 /**
  * Finds the next tree item that is not currently hidden.
@@ -106,7 +103,6 @@ const findPreviousVisibleTreeItem = (currentItem: TreeViewItem) => {
 
   return parent
 }
-
 
 /**
  * The arguments for the {@link TreeView} constructor.
@@ -265,7 +261,7 @@ export class TreeView extends Container {
   constructor (args: Readonly<TreeViewArgs> = {}) {
     super(args)
 
-    this.class.add(CLASS_ROOT)
+    this.class.add('tv-treeview')
 
     this._allowDrag = args.allowDrag ?? true
     this._allowReordering = args.allowReordering ?? true
@@ -288,7 +284,7 @@ export class TreeView extends Container {
     this.dom.addEventListener('mouseleave', this._onMouseLeave)
 
     this._dragHandle.dom.addEventListener('mousemove', this._onDragMove)
-    this._dragHandle.on('destroy', (dom: any) => {
+    this._dragHandle.on('destroy', (dom: Node) => {
       dom.removeEventListener('mousemove', this._onDragMove)
     })
   }
@@ -329,7 +325,7 @@ export class TreeView extends Container {
 
     // Select search results if we are currently filtering tree view items
     if (this._filterResults.length) {
-      const filterResults = this.dom.querySelectorAll(`.${CLASS_ROOT}-item.${CLASS_FILTER_RESULT}`)
+      const filterResults = this.dom.querySelectorAll(`.${'tv-treeview'}-item.${CLASS_FILTER_RESULT}`)
 
       let startIndex = -1
       let endIndex = -1
@@ -668,9 +664,9 @@ export class TreeView extends Container {
            * to perform the reparenting
            */
 
-          const fakeDom: { parent: any; children: any; }[] = []
+          const fakeDom: { parent: Element; children: ChildNode[] }[] = []
 
-          const getChildren = (treeviewItem: { dom: { childNodes: any; }; }) => {
+          const getChildren = (treeviewItem: Element) => {
             let idx = fakeDom.findIndex((entry) => entry.parent === treeviewItem)
             if (idx === -1) {
               fakeDom.push({

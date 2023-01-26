@@ -1,4 +1,4 @@
-.pcui-label {
+.tv-label {
   display: inline-block;
   box-sizing: border-box;
   margin: var(--element-margin);
@@ -11,11 +11,11 @@
   user-select: none;
 }
 
-.pcui-label.pcui-default-mousedown {
+.tv-label.tv-default-mousedown {
   user-select: initial;
 }
 
-.pcui-label.pcui-multiple-values {
+.tv-label.tv-multiple-values {
   position: relative;
   color: transparent;
 
@@ -29,11 +29,11 @@
   }
 }
 
-.pcui-label.pcui-error {
+.tv-label.tv-error {
   color: var(--error-secondary);
 }
 
-.pcui-label.pcui-selectable {
+.tv-label.tv-selectable {
   &:hover {
     color: var(--text-active);
     text-decoration: underline;
@@ -43,7 +43,7 @@
 }
 
 // placeholder
-.pcui-label[placeholder] {
+.tv-label[placeholder] {
   position: relative;
 
   &::after {

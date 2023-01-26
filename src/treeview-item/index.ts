@@ -1,16 +1,15 @@
 /* eslint-disable no-underscore-dangle */
-import './style.scss'
-import * as pcuiClass from '../class'
+import * as tvClass from '../class'
 import { Container, ContainerArgs } from '../container'
 import type { Element } from '../element'
 import { Label } from '../label'
 import { TextInput } from '../textinput'
 
-const CLASS_SELECTED = 'pcui-treeview-item-selected'
-const CLASS_OPEN = 'pcui-treeview-item-open'
-const CLASS_CONTENTS = 'pcui-treeview-item-contents'
-const CLASS_EMPTY = 'pcui-treeview-item-empty'
-const CLASS_RENAME = 'pcui-treeview-item-rename'
+const CLASS_SELECTED = 'tv-treeview-item-selected'
+const CLASS_OPEN = 'tv-treeview-item-open'
+const CLASS_CONTENTS = 'tv-treeview-item-contents'
+const CLASS_EMPTY = 'tv-treeview-item-empty'
+const CLASS_RENAME = 'tv-treeview-item-rename'
 
 /**
  * The arguments for the {@link TreeViewItem} constructor.
@@ -129,7 +128,7 @@ export class TreeViewItem extends Container {
   constructor (args: Readonly<TreeViewItemArgs> = {}) {
     super(args)
 
-    this.class.add('pcui-treeview-item', CLASS_EMPTY)
+    this.class.add('tv-treeview-item', CLASS_EMPTY)
 
     this._containerContents = new Container({
       class: CLASS_CONTENTS,
@@ -142,14 +141,14 @@ export class TreeViewItem extends Container {
     this._containerContents.dom.draggable = true
 
     this._labelIcon = new Label({
-      class: 'pcui-treeview-item-icon',
+      class: 'tv-treeview-item-icon',
     })
     this._containerContents.append(this._labelIcon)
 
-    this.icon = args.icon ?? 'E360'
+    this.icon = args.icon
 
     this._labelText = new Label({
-      class: 'pcui-treeview-item-text',
+      class: 'tv-treeview-item-text',
     })
     this._containerContents.append(this._labelText)
 
@@ -182,7 +181,7 @@ export class TreeViewItem extends Container {
       return
     }
 
-    const dom = this._containerContents.dom
+    const { dom } = this._containerContents
     dom.removeEventListener('focus', this._onContentFocus)
     dom.removeEventListener('blur', this._onContentBlur)
     dom.removeEventListener('keydown', this._onContentKeyDown)
@@ -326,7 +325,7 @@ export class TreeViewItem extends Container {
   }
 
   protected _onContentDblClick = (evt: MouseEvent) => {
-    if (!this._treeView || !this._treeView.allowRenaming || evt.button !== 0) {
+    if (!this._treeView?.allowRenaming || evt.button !== 0) {
       return
     }
 
@@ -366,7 +365,7 @@ export class TreeViewItem extends Container {
 
     // Show text input to enter new text
     const textInput = new TextInput({
-      class: pcuiClass.FONT_REGULAR,
+      class: tvClass.FONT_REGULAR,
       renderChanges: false,
       value: this.text,
     })
@@ -629,14 +628,17 @@ export class TreeViewItem extends Container {
    * The icon shown before the text in the TreeViewItem.
    */
   set icon (value) {
-    if (this._icon === value || (value && !value.match(/^E[0-9]{0,4}$/u))) {
+    if (this._icon === value) {
       return
     }
+
     this._icon = value
+
     if (value) {
       // Set data-icon attribute but first convert the value to a code point
-      this._labelIcon.dom.setAttribute('data-icon', String.fromCodePoint(parseInt(value, 16)))
+      this._labelIcon.dom.setAttribute('data-icon', String.fromCodePoint(Number.parseInt(value, 16)))
     } else {
+      this._labelIcon.dom.style.display = 'none'
       this._labelIcon.dom.removeAttribute('data-icon')
     }
   }

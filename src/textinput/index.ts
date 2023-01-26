@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import * as pcuiClass from '../class'
+import * as tvClass from '../class'
 import type { IBindableArgs, IPlaceholderArgs } from '../element'
 import { InputElement, InputElementArgs } from '../input'
 
@@ -24,7 +24,7 @@ export class TextInput extends InputElement {
   constructor (args: Readonly<TextInputArgs> = {}) {
     super(args)
 
-    this.class.add('pcui-text-input')
+    this.class.add('tv-text-input')
 
     if (args.onValidate) {
       this.onValidate = args.onValidate
@@ -50,7 +50,7 @@ export class TextInput extends InputElement {
   }
 
   protected _updateValue (value: string | string[] | null) {
-    this.class.remove(pcuiClass.MULTIPLE_VALUES)
+    this.class.remove(tvClass.MULTIPLE_VALUES)
 
     if (value && typeof (value) === 'object') {
       if (Array.isArray(value)) {
@@ -106,7 +106,7 @@ export class TextInput extends InputElement {
 
     if (different) {
       this._updateValue(null)
-      this.class.add(pcuiClass.MULTIPLE_VALUES)
+      this.class.add(tvClass.MULTIPLE_VALUES)
     } else {
       this._updateValue(values[0])
     }

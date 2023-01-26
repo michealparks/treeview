@@ -2,10 +2,6 @@ import './main.css'
 import { Pane, type TpChangeEvent } from 'tweakpane'
 import { TreeView, TreeViewItem } from '../src/main'
 
-// const el = new Resizable()
-// el.resizable = 'right'
-// document.body.append(el.dom)
-
 const treeview = new TreeView()
 treeview.dom.classList.add('sticky', 'top-0')
 treeview.scrollable = true
@@ -33,15 +29,13 @@ for (let i = 0; i < 10; i += 1) {
   }
 }
 
+const style = document.createElement('style')
+document.head.append(style)
+
 const computedStyle = getComputedStyle(document.querySelector('style')!)
 
 const cssVar = (name: string) => {
   return computedStyle.getPropertyValue(name)
-}
-
-const setCssVar = ({ presetKey, value }: TpChangeEvent<string>) => {
-  console.log(presetKey, value)
-  document.querySelectorAll('style')[1].style.setProperty(presetKey!, value)
 }
 
 const list = [
@@ -72,11 +66,25 @@ const list = [
   '--element-opacity-readonly',
 ]
 
+const params = {}
+
+const setCssVar = ({ presetKey, value }: TpChangeEvent<string>) => {
+  console.log(presetKey, value)
+
+  let innerHTML = ':root {'
+
+  for (const item of list) {
+    innerHTML += `${item}: ${params[item]} !important;`
+  }
+
+  innerHTML += '}'
+
+  style.innerHTML = innerHTML
+}
+
 const pane = new Pane()
 pane.element.style.width = '350px'
 pane.element.style.transform = 'translateX(-100px)'
-
-const params = {}
 
 for (const item of list) {
   params[item] = cssVar(item)
