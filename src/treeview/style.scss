@@ -116,24 +116,9 @@
   }
 }
 
-.tv-treeview-item:not(.tv-treeview-item-empty) {
-  > .tv-treeview-item-contents::before {
-    content: '\e901';
-    font-family: 'plusminus';
-
-    // @extend .font-icon;
-
-    speak: never;
-    font-style: normal;
-    font-weight: normal;
-    font-variant: normal;
-    text-transform: none;
-    line-height: 1;
-
-    /* Better Font Rendering =========== */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-
+.tv-treeview-item {
+  .icon-plus,
+  .icon-minus {
     position: absolute;
     font-size: 10px;
     font-weight: bold;
@@ -148,11 +133,27 @@
     margin: 3px;
     cursor: pointer;
     z-index: 1;
+    box-sizing: border-box;
+    padding: 2px;
+  }
+
+  .tv-treeview-item.tv-treeview-item-empty {
+    .icon-plus,
+    .icon-minus {
+      display: none;
+    }
+  }  
+
+  > .tv-treeview-item-contents .icon-minus {
+    display: none;
   }
 
   &.tv-treeview-item-open {
-    > .tv-treeview-item-contents::before {
-      content: '\e900';
+    > .tv-treeview-item-contents .icon-minus {
+      display: block;
+    }
+    > .tv-treeview-item-contents .icon-plus {
+      display: none;
     }
   }
 }
@@ -181,7 +182,7 @@
       }
 
       > .tv-treeview-item {
-          padding-left: 22px;
+          padding-left: 21px;
 
           // top line
           &::before {

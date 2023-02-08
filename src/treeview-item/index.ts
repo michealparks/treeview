@@ -137,6 +137,11 @@ export class TreeViewItem extends Container {
       tabIndex: 0,
     })
     this.append(this._containerContents)
+    this._containerContents.dom.innerHTML +=
+      '<svg class="icon-minus" viewBox="0 0 32 32"><path fill="#fff" d="M8 14.656h16v2.688h-16v-2.688z"></path></svg>'
+    this._containerContents.dom.innerHTML +=
+      // eslint-disable-next-line max-len
+      '<svg class="icon-plus" viewBox="0 0 768 768"><path fill="#fff" d="M607.5 415.5h-192v192h-63v-192h-192v-63h192v-192h63v192h192v63z"></path></svg>'
 
     this._containerContents.dom.draggable = true
 
@@ -299,6 +304,8 @@ export class TreeViewItem extends Container {
     }
 
     evt.stopPropagation()
+
+    console.log(evt.currentTarget, evt.target)
 
     const rect = this._containerContents.dom.getBoundingClientRect()
     if (this._numChildren > 0 && evt.clientX - rect.left < 0) {
