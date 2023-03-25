@@ -152,7 +152,10 @@ export abstract class InputElement extends Element implements IBindable, IFocusa
     this.emit('keydown', evt)
   }
 
-  protected _onInputChange (_evt: Event) {}
+  // eslint-disable-next-line class-methods-use-this
+  protected _onInputChange (_evt: Event) {
+    // Do nothing.
+  }
 
   protected _onInputKeyUp = (evt: KeyboardEvent) => {
     if (evt.key !== 'Escape') {

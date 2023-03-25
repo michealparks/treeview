@@ -49,7 +49,9 @@ export class TextInput extends InputElement {
     this.emit('change', this.value)
   }
 
-  protected _updateValue (value: string | string[] | null) {
+  protected _updateValue (v: string | string[] | null) {
+    let value = v
+
     this.class.remove(tvClass.MULTIPLE_VALUES)
 
     if (value && typeof (value) === 'object') {

@@ -6,10 +6,10 @@ import { TreeViewItem } from '../treeview-item'
 import css from '../main.scss?inline'
 import { searchItems } from '../search'
 
-const CLASS_DRAGGED_ITEM = 'tv-treeview-item-dragged'
-const CLASS_DRAGGED_HANDLE = 'tv-treeview-drag-handle'
-const CLASS_FILTERING = 'tv-treeview-filtering'
-const CLASS_FILTER_RESULT = 'tv-treeview-filtering-result'
+const CLASS_DRAGGED_ITEM = 'tv-item-dragged'
+const CLASS_DRAGGED_HANDLE = 'tv-drag-handle'
+const CLASS_FILTERING = 'tv-filtering'
+const CLASS_FILTER_RESULT = 'tv-filtering-result'
 
 const DRAG_AREA_INSIDE = 'inside'
 const DRAG_AREA_BEFORE = 'before'
@@ -266,7 +266,7 @@ export class TreeView extends Container {
     style.innerHTML = css
     this.dom.append(style)
 
-    this.class.add('tv-treeview')
+    this.class.add('tv')
 
     this._allowDrag = args.allowDrag ?? true
     this._allowReordering = args.allowReordering ?? true
@@ -331,7 +331,7 @@ export class TreeView extends Container {
 
     // Select search results if we are currently filtering tree view items
     if (this._filterResults.length) {
-      const filterResults = this.dom.querySelectorAll(`.${'tv-treeview'}-item.${CLASS_FILTER_RESULT}`)
+      const filterResults = this.dom.querySelectorAll(`.tv-item.${CLASS_FILTER_RESULT}`)
 
       let startIndex = -1
       let endIndex = -1

@@ -5,11 +5,11 @@ import type { Element } from '../element'
 import { Label } from '../label'
 import { TextInput } from '../textinput'
 
-const CLASS_SELECTED = 'tv-treeview-item-selected'
-const CLASS_OPEN = 'tv-treeview-item-open'
-const CLASS_CONTENTS = 'tv-treeview-item-contents'
-const CLASS_EMPTY = 'tv-treeview-item-empty'
-const CLASS_RENAME = 'tv-treeview-item-rename'
+const CLASS_SELECTED = 'tv-item-selected'
+const CLASS_OPEN = 'tv-item-open'
+const CLASS_CONTENTS = 'tv-item-contents'
+const CLASS_EMPTY = 'tv-item-empty'
+const CLASS_RENAME = 'tv-item-rename'
 
 /**
  * The arguments for the {@link TreeViewItem} constructor.
@@ -128,7 +128,7 @@ export class TreeViewItem extends Container {
   constructor (args: Readonly<TreeViewItemArgs> = {}) {
     super(args)
 
-    this.class.add('tv-treeview-item', CLASS_EMPTY)
+    this.class.add('tv-item', CLASS_EMPTY)
 
     this._containerContents = new Container({
       class: CLASS_CONTENTS,
@@ -146,14 +146,14 @@ export class TreeViewItem extends Container {
     this._containerContents.dom.draggable = true
 
     this._labelIcon = new Label({
-      class: 'tv-treeview-item-icon',
+      class: 'tv-item-icon',
     })
     this._containerContents.append(this._labelIcon)
 
     this.icon = args.icon
 
     this._labelText = new Label({
-      class: 'tv-treeview-item-text',
+      class: 'tv-item-text',
     })
     this._containerContents.append(this._labelText)
 
@@ -304,8 +304,6 @@ export class TreeViewItem extends Container {
     }
 
     evt.stopPropagation()
-
-    console.log(evt.currentTarget, evt.target)
 
     const rect = this._containerContents.dom.getBoundingClientRect()
     if (this._numChildren > 0 && evt.clientX - rect.left < 0) {

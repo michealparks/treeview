@@ -7,25 +7,39 @@ treeview.dom.classList.add('sticky', 'top-0')
 treeview.scrollable = true
 treeview.allowRenaming = true
 
+treeview.dom.style.cssText = `
+  min-width: 300px;
+  max-height: 400px;
+  overflow: auto;
+  background: white;
+`
+
 document.body.append(treeview.wc)
 
-const root = new TreeViewItem({ text: `root` })
-treeview.append(root)
+const world = new TreeViewItem({ text: 'world' })
+treeview.append(world)
+
+const root = new TreeViewItem({ text: 'root' })
+world.append(root)
+world.parent!.open = true
 
 for (let i = 0; i < 10; i += 1) {
   const item1 = new TreeViewItem({ text: `item ${i}` })
   root.append(item1)
   item1.open = true
+  item1.parent!.open = true
 
   for (let j = 0; j < 5; j += 1) {
-    const item2 = new TreeViewItem({ text: `item ${i},${j}` })
-    item1.append(item2)
-    item2.open = true
-
-    for (let k = 0; k < 3; k += 1) {
-      const item3 = new TreeViewItem({ text: `item ${i},${j},${k}` })
-      item2.append(item3)
-    }
+    setTimeout(() => {
+      const item2 = new TreeViewItem({ text: `item ${i},${j}` })
+      item1.append(item2)
+      item2.parent!.open = true
+  
+      for (let k = 0; k < 3; k += 1) {
+        const item3 = new TreeViewItem({ text: `item ${i},${j},${k}` })
+        item2.append(item3)
+      }
+    })
   }
 }
 

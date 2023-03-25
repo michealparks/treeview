@@ -1,4 +1,4 @@
-import { TreeView, type TreeViewArgs } from './treeview';
+import { TreeView, type TreeViewArgs } from './treeview'
 
 export class TreeViewWebComponent extends TreeView {
   wc = document.createElement('tree-view')
