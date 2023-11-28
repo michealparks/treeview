@@ -19,13 +19,12 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install and Build 🔧
         run: |
           npm ci --audit=false
           npm run build
-          npm run build-playground
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4

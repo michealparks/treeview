@@ -83,7 +83,7 @@ export const useTweakpane = (config?: Omit<PaneConfig, 'container' | 'document'>
 	const addInput = <Value>(options: {
 		label: string
 		value: Value
-		params?: any
+		params?: unknown
 		parent?: FolderApi | TabPageApi
 	}): Writable<Value> => {
 		const inputStore = writable({

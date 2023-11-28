@@ -1,12 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte'
 	import { writable } from 'svelte/store'
-	import {
-		type TreeNodeInternal,
-		type TreeNode,
-		type TreeNodeIcon,
-		createNodes,
-	} from '../internal/node'
+	import { type TreeNodeInternal, type TreeNode, createNodes } from '../internal/node'
 	import { createTreeContext, getTreeContext } from '../internal/context'
 	import { prevSibling, nextSibling, traverseInternal } from '../internal/traversal'
 	import TreeNodeComponent from './TreeNode.svelte'
@@ -104,6 +99,16 @@
 
 		const oldParent = node.parent
 		const newParent = dragTarget.node
+
+    // New parent cannot be a child of dragged node
+    let isParentChild = false
+    traverseInternal(node.children, (childNode) => {
+      if (childNode.id === newParent.id) {
+        isParentChild = true
+      }
+    })
+
+    if (isParentChild) return
 
 		// Remove the current parent
 		oldParent.children.splice(oldParent.children.indexOf(node), 1)
