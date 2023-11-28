@@ -1,14 +1,9 @@
-import { defineConfig } from 'vite'
+import { sveltekit } from '@sveltejs/kit/vite'
+import { defineConfig } from 'vitest/config'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  build: {
-    minify: true,
-    target: 'esnext',
-    lib: {
-      entry: 'src/main.ts',
-      name: 'TREEVIEW',
-      fileName: 'main'
-    }
-  },
+	plugins: [sveltekit()],
+	test: {
+		include: ['src/**/*.{test,spec}.{js,ts}'],
+	},
 })
