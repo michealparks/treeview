@@ -14,7 +14,7 @@ export const useTweakpane = (config?: Omit<PaneConfig, 'container' | 'document'>
 				return writable<Value>()
 			},
 			action() {},
-			pane: null,
+			pane: undefined,
 		}
 	}
 
@@ -60,7 +60,7 @@ export const useTweakpane = (config?: Omit<PaneConfig, 'container' | 'document'>
 			destroy() {
 				if (disposed) return
 				pane.dispose()
-				unsubscriptions.forEach((unsubscribe) => unsubscribe())
+				for (const unsubscribe of unsubscriptions) unsubscribe()
 				disposed = true
 			},
 		}
@@ -72,7 +72,7 @@ export const useTweakpane = (config?: Omit<PaneConfig, 'container' | 'document'>
 		onClick: () => void
 		parent?: FolderApi | TabPageApi
 	}) => {
-		const button = (options.parent ? options.parent : pane).addButton({
+		const button = (options.parent ?? pane).addButton({
 			title: options.title,
 			label: options.label ?? options.title,
 		})
@@ -97,7 +97,7 @@ export const useTweakpane = (config?: Omit<PaneConfig, 'container' | 'document'>
 		})
 
 		const store = writable<Value>(options.value)
-		const binding = (options.parent ? options.parent : pane).addBinding(
+		const binding = (options.parent ?? pane).addBinding(
 			{
 				[options.label]: get(store),
 			},
@@ -105,10 +105,10 @@ export const useTweakpane = (config?: Omit<PaneConfig, 'container' | 'document'>
 			options.params,
 		)
 
-		binding.on('change', (e: { value: Value }) => {
+		binding.on('change', (event: { value: Value }) => {
 			inputStore.set({
 				updatedAt: Date.now(),
-				value: e.value,
+				value: event.value,
 			})
 		})
 
@@ -129,15 +129,15 @@ export const useTweakpane = (config?: Omit<PaneConfig, 'container' | 'document'>
 		return {
 			subscribe: value.subscribe,
 			set: (value: Value) => userStore.set({ updatedAt: Date.now(), value }),
-			update: (fn: (value: Value) => Value) =>
-				userStore.update((v) => ({ updatedAt: Date.now(), value: fn(v.value) })),
+			update: (callback: (value: Value) => Value) =>
+				userStore.update((v) => ({ updatedAt: Date.now(), value: callback(v.value) })),
 		} as Writable<Value>
 	}
 
 	onDestroy(() => {
 		if (disposed) return
 		pane.dispose()
-		unsubscriptions.forEach((unsubscribe) => unsubscribe())
+		for (const unsub of unsubscriptions) unsub()
 		disposed = true
 	})
 

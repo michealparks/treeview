@@ -100,15 +100,15 @@
 		const oldParent = node.parent
 		const newParent = dragTarget.node
 
-    // New parent cannot be a child of dragged node
-    let isParentChild = false
-    traverseInternal(node.children, (childNode) => {
-      if (childNode.id === newParent.id) {
-        isParentChild = true
-      }
-    })
+		// New parent cannot be a child of dragged node
+		let isParentChild = false
+		traverseInternal(node.children, (childNode) => {
+			if (childNode.id === newParent.id) {
+				isParentChild = true
+			}
+		})
 
-    if (isParentChild) return
+		if (isParentChild) return
 
 		// Remove the current parent
 		oldParent.children.splice(oldParent.children.indexOf(node), 1)

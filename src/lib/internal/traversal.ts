@@ -2,14 +2,14 @@ import type { TreeNodeInternal, TreeNode } from './node'
 
 export const traverseInternal = (
 	nodes: TreeNodeInternal[],
-	fn: (node: TreeNodeInternal) => void,
+	callback: (node: TreeNodeInternal) => void,
 ) => {
-	nodes.forEach((node) => {
-		fn(node)
+	for (const node of nodes) {
+		callback(node)
 		if (node.children.length > 0) {
-			traverseInternal(node.children, fn)
+			traverseInternal(node.children, callback)
 		}
-	})
+	}
 }
 
 const getSibling = (node: TreeNodeInternal, direction: -1 | 1): TreeNodeInternal | undefined => {
@@ -65,9 +65,11 @@ export const prevSibling = (node: TreeNodeInternal): TreeNodeInternal | undefine
 	return node.parent ?? undefined
 }
 
-export const traverse = (nodes: TreeNode[], fn: (node: TreeNode) => void) => {
-	nodes.forEach((node) => {
-		fn(node)
-		if (node.children !== undefined) traverse(node.children, fn)
-	})
+export const traverse = (nodes: TreeNode[], callback: (node: TreeNode) => void) => {
+	for (const node of nodes) {
+		callback(node)
+		if (node.children !== undefined) {
+			traverse(node.children, callback)
+		}
+	}
 }

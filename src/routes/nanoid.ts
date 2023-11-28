@@ -11,7 +11,7 @@ export const nanoid = (size = 21): string => {
 
 	let id = ''
 
-	for (let i = 0, l = values.length; i < l; i += 1) {
+	for (let index = 0, l = values.length; index < l; index += 1) {
 		const byte = values[i] & 63
 
 		if (byte < 36) {
