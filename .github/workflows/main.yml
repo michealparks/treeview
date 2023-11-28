@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    
       - name: Checkout 🛎️
         uses: actions/checkout@v3
 
@@ -41,5 +40,3 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
-
-
