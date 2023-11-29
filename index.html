@@ -1,14 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TreeView Playground</title>
-    <script type="module" crossorigin src="/treeview/assets/index-c46db334.js"></script>
-    <link rel="stylesheet" href="/treeview/assets/index-d05d5539.css">
-  </head>
-  <body>
-    
-  </body>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="./favicon.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		
+		<link rel="modulepreload" href="./_app/immutable/entry/start.RhgIWwnl.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/scheduler.lrG5vsk-.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.YVDjmc-e.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index._Mw4LApA.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.iVsEcGUN.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.wrzc1q4_.js">
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div>
+			<script>
+				{
+					__sveltekit_yz3qgn = {
+						base: new URL(".", location).pathname.slice(0, -1),
+						env: {}
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("./_app/immutable/entry/start.RhgIWwnl.js"),
+						import("./_app/immutable/entry/app.iVsEcGUN.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element);
+					});
+				}
+			</script>
+		</div>
+	</body>
 </html>
