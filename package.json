@@ -1,5 +1,6 @@
 {
-	"name": "svelte-treeview",
+	"name": "treeview-svelte",
+	"description": "A svelte treeview UI component.",
 	"version": "0.0.1",
 	"scripts": {
 		"start": "vite dev",
