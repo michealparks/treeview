@@ -30,7 +30,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           BRANCH: gh-pages
-          FOLDER: dist-playground
+          FOLDER: build
           CLEAN: true
           clean-exclude: |
             .nojekyll

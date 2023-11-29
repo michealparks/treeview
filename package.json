@@ -4,6 +4,7 @@
 	"scripts": {
 		"start": "vite dev",
 		"build": "vite build && npm run package",
+		"build:site": "vite build",
 		"preview": "vite preview",
 		"package": "svelte-kit sync && svelte-package && publint",
 		"prepublishOnly": "npm run package",
@@ -32,6 +33,7 @@
 	"devDependencies": {
 		"@playwright/test": "^1.40.0",
 		"@sveltejs/adapter-auto": "^2.1.1",
+		"@sveltejs/adapter-static": "^2.0.3",
 		"@sveltejs/kit": "^1.27.6",
 		"@sveltejs/package": "^2.2.3",
 		"@typescript-eslint/eslint-plugin": "^6.13.1",
