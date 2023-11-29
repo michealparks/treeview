@@ -1,4 +1,4 @@
-import '../app.css'
+import './index.css'
 
 export { default as Treeview } from './components/Treeview.svelte'
 
