@@ -7,7 +7,7 @@ interface Context {
 	toggled: Writable<TreeNodeInternal | undefined>
 	focused: Writable<TreeNodeInternal | undefined>
 	dragging: Writable<TreeNodeInternal | undefined>
-	dragMap: Map<HTMLElement, { node: TreeNodeInternal; before?: true }>
+	dragMap: Map<HTMLElement, { node: TreeNodeInternal }>
 }
 
 const key = Symbol('treeview-context')

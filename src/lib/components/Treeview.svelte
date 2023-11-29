@@ -3,8 +3,9 @@
 	import { writable } from 'svelte/store'
 	import { type TreeNodeInternal, type TreeNode, createNodes } from '../internal/node'
 	import { createTreeContext, getTreeContext } from '../internal/context'
-	import { prevSibling, nextSibling, traverseInternal } from '../internal/traversal'
+	import { traverseInternal } from '../internal/traversal'
 	import TreeNodeComponent from './TreeNode.svelte'
+	import { useKeybinding } from '$lib/internal/keybinding'
 
 	export let nodes: TreeNode[]
 
@@ -23,52 +24,16 @@
 
 	createTreeContext()
 
+  const handleKeyBinding = useKeybinding()
+
 	const { selected, toggled, dragging, dragMap } = getTreeContext()
 
 	let lastSelected: TreeNodeInternal | undefined
 
 	const handleKey = (event: KeyboardEvent) => {
-		switch (event.key.toLowerCase()) {
-			case 'arrowleft': {
-				if ($selected !== undefined) {
-					let s = $selected
-					traverseInternal($nodesInternal, (node) => $selected === node && (node.expanded = false))
-					nodesInternal.set($nodesInternal)
-					$selected = s
-				}
-				break
-			}
-
-			case 'arrowright': {
-				if ($selected !== undefined) {
-					let s = $selected
-					traverseInternal($nodesInternal, (node) => $selected === node && (node.expanded = true))
-					nodesInternal.set($nodesInternal)
-					$selected = s
-				}
-				break
-			}
-
-			case 'arrowup': {
-				$selected ??= $nodesInternal[0]
-				const prevNode = prevSibling($selected)
-				if (prevNode !== undefined) {
-					event.preventDefault()
-					$selected = prevNode
-				}
-				break
-			}
-
-			case 'arrowdown': {
-				$selected ??= $nodesInternal[0]
-				const nextNode = nextSibling($selected)
-				if (nextNode !== undefined) {
-					event.preventDefault()
-					$selected = nextNode
-				}
-				break
-			}
-		}
+    event.preventDefault()
+    const nextNodes = handleKeyBinding(event.key.toLowerCase(), $nodesInternal)
+    if (nextNodes) nodesInternal.set(nextNodes)
 	}
 
 	let dragTarget:
@@ -100,6 +65,9 @@
 		const oldParent = node.parent
 		const newParent = dragTarget.node
 
+    // New parent cannot be self
+    if (node === newParent) return
+
 		// New parent cannot be a child of dragged node
 		let isParentChild = false
 		traverseInternal(node.children, (childNode) => {
@@ -107,7 +75,6 @@
 				isParentChild = true
 			}
 		})
-
 		if (isParentChild) return
 
 		// Remove the current parent
@@ -155,9 +122,10 @@
 	}
 </script>
 
-<div
+<ul
 	role="tree"
 	tabindex="0"
+  class='list-none p-0 m-0 flex flex-col gap-1 '
 	on:keydown={handleKey}
 	on:pointermove={$dragging ? handleDrag : undefined}
 	on:pointerup={handleDragEnd}
@@ -166,4 +134,4 @@
 	{#each $nodesInternal as node (node.id)}
 		<TreeNodeComponent {node} on:toggle />
 	{/each}
-</div>
+</ul>
