@@ -128,7 +128,7 @@
   class='list-none p-0 m-0 flex flex-col gap-1 '
 	on:keydown={handleKey}
 	on:pointermove={$dragging ? handleDrag : undefined}
-	on:pointerup={handleDragEnd}
+	on:pointerup={$dragging ? handleDragEnd : undefined}
 	{...$$restProps}
 >
 	{#each $nodesInternal as node (node.id)}
