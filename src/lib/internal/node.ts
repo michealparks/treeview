@@ -4,13 +4,14 @@ interface TreeNodeIconUrl {
 
 interface TreeNodeIconPath {
 	path: string
+	viewBox: string
 }
 
 interface TreeNodeIconFont {
 	class: string
 }
 
-export type TreeNodeIcon = TreeNodeIconUrl | TreeNodeIconPath | TreeNodeIconFont
+export type TreeNodeIcon = TreeNodeIconUrl | TreeNodeIconPath | TreeNodeIconFont | string
 
 export interface TreeNodeInternal {
 	id: string

@@ -36,13 +36,15 @@
 			<div
 				class={cx(
 					'grid place-content-center h-5 w-5 bg-[rgba(0,0,0,0.1)] rounded-full',
-					'class' in icon ? icon.class : '',
+					typeof icon === 'object' && 'class' in icon ? icon.class : '',
 				)}
 			>
-				{#if 'path' in icon}
+				{#if typeof icon === 'string'}
+					{@html icon}
+				{:else if 'path' in icon}
 					<svg
 						class="h-[var(--treeview-icon-size,0.75rem)] w-[var(--treeview-icon-size,0.75rem)]"
-						viewBox="0 0 24 24"
+						viewBox={icon.viewBox}
 					>
 						<path d={icon.path} />
 					</svg>

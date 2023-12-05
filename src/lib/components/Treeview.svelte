@@ -100,19 +100,9 @@
 		dragging.set(false)
 	}
 
-	export const expand = () => {
+	export const select = (id: string) => {
 		traverseInternal($nodesInternal, (node) => {
-			if (node.children.length > 0) {
-				node.expanded = true
-			}
-		})
-	}
-
-	export const collapse = () => {
-		traverseInternal($nodesInternal, (node) => {
-			if (node.children.length > 0) {
-				node.expanded = false
-			}
+			if (node.id === id) $selectedNode = node
 		})
 	}
 

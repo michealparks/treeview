@@ -9,7 +9,7 @@
 		expanded: true,
 	})
 
-	let expand: () => void
+	let select: (id: string) => void
 
 	const keys = {
 		connectorLinesColor: '--treeview-connector-lines-color',
@@ -67,7 +67,7 @@
     ${keys.toggleButtonBgColor}:${$togglButtonBgColor};
   `
 
-	onMount(() => expand())
+	onMount(() => select('bob'))
 </script>
 
 <div use:action />
@@ -75,9 +75,12 @@
 <main>
 	<Treeview
 		{style}
-		bind:expand
-
+		bind:select
 		{nodes}
+		on:select={(event) => console.log('select', event)}
+		on:deselect={(event) => console.log('deselect', event)}
+		on:reparent={(event) => console.log('reparent', event)}
+		on:toggle={(event) => console.log('toggle', event)}
 	/>
 </main>
 
