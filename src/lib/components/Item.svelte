@@ -17,9 +17,7 @@
 
 	onMount(() => {
 		dragMap.set(ref, { node })
-		return () => {
-			dragMap.delete(ref)
-		}
+		return () => dragMap.delete(ref)
 	})
 </script>
 

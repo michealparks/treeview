@@ -6,25 +6,26 @@
 	export let node: TreeNodeInternal
 	export let active: boolean
 
-	const { selected, dragging } = getTreeContext()
+	let ref: HTMLButtonElement | undefined
+
+	const { selectedNode, dragNode, pointerDown } = getTreeContext()
+
+	$: if (active) ref?.focus()
 </script>
 
 <button
-	class={cx(
-		'name h-5 m-0 py-0 px-2 rounded-sm border-0 whitespace-nowrap bg-[var(--treeview-node-bg-color,#eee)]',
-		{ 'bg-[var(--treeview-node-active-bg-color,#222)] text-white fill-white': active },
-    'hover:bg-[var(--treeview-node-hovered-bg-color,#666)] focus-within:bg-[var(var(--treeview-node-hovered-bg-color,#666))]'
-	)}
-	on:click={() => selected.set(node)}
-	on:pointerdown={() => dragging.set(node)}
+	bind:this={ref}
+	class={cx({
+		'!text-[var(--treeview-node-active-text-color,#fff)] !bg-[var(--treeview-node-active-bg-color,#222)]': active,
+		'name h-5 m-0 py-0 px-2 rounded-[var(--treeview-button-border-radius,2px)] border-0 whitespace-nowrap outline-none bg-[var(--treeview-node-bg-color,#eee)]': true,
+		'hover:text-[var(--treeview-node-hovered-text-color,#fff)] hover:bg-[var(--treeview-node-hovered-bg-color,#666)]': true,
+		'focus-within:text-[var(--treeview-node-hovered-text-color,#fff)] focus-within:bg-[var(--treeview-node-hovered-bg-color,#666)]': true,
+	})}
+	on:click={() => selectedNode.set(node)}
+	on:pointerdown={(event) => {
+		dragNode.set(node)
+		pointerDown.set({ x: event.clientX, y: event.clientY })
+	}}
 >
 	{node.name}
 </button>
-
-<style>
-	button:hover,
-	button:focus-within {
-		color: white;
-		fill: white;
-	}
-</style>

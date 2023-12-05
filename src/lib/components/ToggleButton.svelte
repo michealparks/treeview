@@ -4,7 +4,7 @@
 </script>
 
 <button
-	class="flex items-center justify-center rounded-sm m-0 p-0 border-0"
+	class="flex items-center justify-center rounded-[var(--treeview-button-border-radius,2px)] m-0 p-0 border-0"
 	class:expanded
 	on:click={onToggle}
 >
@@ -13,9 +13,9 @@
 		class="h-[var(--treeview-toggle-icon-size,1rem)] w-[var(--treeview-toggle-icon-size,1rem)]"
 	>
 		{#if expanded}
-			<path d="M18.9 12.9h-13.9v-1.9h13.9v1.9z" />
+			<path d="M7.41 8.58l4.59 4.59 4.59-4.59 1.41 1.41-6 6-6-6z" />
 		{:else}
-			<path d="M18.9 12.9h-6v6h-1.9v-6h-6v-1.9h6v-6h1.9v6h6v1.9z" />
+			<path d="M8.58 16.59l4.59-4.59-4.59-4.59 1.41-1.41 6 6-6 6z" />
 		{/if}
 	</svg>
 </button>

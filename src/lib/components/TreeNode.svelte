@@ -7,15 +7,15 @@
 
 	$: expanded = node.expanded ?? false
 
-	const { selected, toggled } = getTreeContext()
+	const { selectedNode, toggledNode } = getTreeContext()
 
 	const toggle = () => {
 		expanded = !expanded
 		node.expanded = expanded
-		toggled.set(node)
+		toggledNode.set(node)
 	}
 
-	$: active = $selected === node
+	$: active = $selectedNode === node
 </script>
 
 <Item {node} {expanded} {active} onToggle={toggle} />

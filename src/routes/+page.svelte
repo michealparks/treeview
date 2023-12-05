@@ -76,9 +76,7 @@
 	<Treeview
 		{style}
 		bind:expand
-		on:toggle={(event) => console.log('toggle', event.detail)}
-		on:select={(event) => console.log('select', event.detail)}
-		on:deselect={(event) => console.log('deselect', event.detail)}
+
 		{nodes}
 	/>
 </main>

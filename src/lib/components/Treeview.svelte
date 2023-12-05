@@ -26,7 +26,7 @@
 
   const handleKeyBinding = useKeybinding()
 
-	const { selected, toggled, dragging, dragMap } = getTreeContext()
+	const { selectedNode, toggledNode, dragNode, dragMap, dragging, pointerDown } = getTreeContext()
 
 	let lastSelected: TreeNodeInternal | undefined
 
@@ -44,6 +44,12 @@
 		| undefined
 
 	const handleDrag = (event: PointerEvent) => {
+		const distance = Math.hypot(event.clientX - $pointerDown.x, event.clientY - $pointerDown.y)
+
+		if (distance < 8) return
+	
+		dragging.set(true)
+
 		let target = event.target as HTMLElement
 
 		if (!('spacer' in target.dataset)) {
@@ -56,9 +62,11 @@
 	}
 
 	const handleDragEnd = () => {
-		const node = $dragging!
-		dragging.set(undefined)
 
+		const node = $dragNode!
+		dragNode.set(undefined)
+
+		if (!$dragging) return
 		if (dragTarget === undefined) return
 		if (node.parent === null) return
 
@@ -87,6 +95,9 @@
 
 		$nodesInternal = $nodesInternal
 		dispatch('reparent', { node, oldParent, newParent })
+
+		dragTarget = undefined
+		dragging.set(false)
 	}
 
 	export const expand = () => {
@@ -105,30 +116,35 @@
 		})
 	}
 
-	$: if ($toggled) {
-		dispatch('toggle', $toggled)
+	$: if ($toggledNode) {
+		dispatch('toggle', $toggledNode)
 	}
 
 	$: {
-		if (lastSelected && lastSelected !== $selected) {
+		if (lastSelected && lastSelected !== $selectedNode) {
 			dispatch('deselect', lastSelected)
 		}
 
-		lastSelected = $selected
+		lastSelected = $selectedNode
 
-		if ($selected) {
-			dispatch('select', $selected)
+		if ($selectedNode) {
+			dispatch('select', $selectedNode)
 		}
 	}
+
+	$: document.body.classList.toggle('!cursor-grabbing', $dragNode !== undefined)
 </script>
+
+<svelte:window
+	on:pointerup={handleDragEnd}
+/>
 
 <ul
 	role="tree"
 	tabindex="0"
-  class='list-none p-0 m-0 flex flex-col gap-1 '
+  class='list-none p-0 m-0 flex flex-col gap-1 outline-none'
 	on:keydown={handleKey}
-	on:pointermove={$dragging ? handleDrag : undefined}
-	on:pointerup={$dragging ? handleDragEnd : undefined}
+	on:pointermove={$dragNode ? handleDrag : undefined}
 	{...$$restProps}
 >
 	{#each $nodesInternal as node (node.id)}

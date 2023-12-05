@@ -4,7 +4,7 @@ import { prevSibling, nextSibling, traverseInternal } from '../internal/traversa
 import type { TreeNodeInternal } from './node'
 
 export const useKeybinding = () => {
-  const { selected } = getTreeContext()
+  const { selectedNode: selected } = getTreeContext()
 
   return (key: string, nodes: TreeNodeInternal[]) => {
     const selectedNode = get(selected)
