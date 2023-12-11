@@ -1,3 +1,5 @@
+import { getTreeContext } from './context'
+
 interface TreeNodeIconUrl {
 	url: string
 }
@@ -19,6 +21,7 @@ export interface TreeNodeInternal {
 	parent: TreeNodeInternal | null
 	children: TreeNodeInternal[]
 	expanded?: boolean
+	selected?: boolean
 	icon?: TreeNodeIcon
 }
 
@@ -27,6 +30,7 @@ export type TreeNode = {
 	name: string
 	children?: TreeNode[]
 	expanded?: boolean
+	selected?: boolean
 	icon?: TreeNodeIcon
 }
 
@@ -44,5 +48,12 @@ export const createNodes = (
 	nodesExternal: TreeNode[],
 	parent: TreeNodeInternal | null = null,
 ): TreeNodeInternal[] => {
-	return nodesExternal.map((node) => createTreeNode(node, parent))
+	const { selectedNode } = getTreeContext()
+	return nodesExternal.map((node) => {
+		const internalNode = createTreeNode(node, parent)
+		if (internalNode.selected) {
+			selectedNode.set(internalNode)
+		}
+		return internalNode
+	})
 }

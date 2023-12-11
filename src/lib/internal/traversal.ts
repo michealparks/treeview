@@ -13,18 +13,21 @@ export const traverseInternal = (
 }
 
 const getSibling = (node: TreeNodeInternal, direction: -1 | 1): TreeNodeInternal | undefined => {
-	const parent = node.parent
+	const children = node.parent?.children
 
-	const index = parent?.children?.indexOf(node)
+	if (children === undefined) return
+
+	const index = children.indexOf(node)
 
 	if (index === undefined) return
 
-	return parent?.children?.[index + direction]
+	return children[index + direction]
 }
 
 export const nextSibling = (node: TreeNodeInternal): TreeNodeInternal | undefined => {
+	console.log('hi', node)
 	// Next is expanded
-	if (node.expanded) {
+	if (node.expanded && node.children.length > 0) {
 		return node.children?.[0]
 	}
 
@@ -48,9 +51,9 @@ export const prevSibling = (node: TreeNodeInternal): TreeNodeInternal | undefine
 	// Prevous is expanded
 	const sibling = getSibling(node, -1)
 
-	if (sibling?.expanded && sibling.children !== undefined) {
+	if (sibling?.expanded && sibling.children.length > 0) {
 		let child = sibling.children.at(-1)
-		if (child !== undefined && child.children !== undefined) {
+		if (child !== undefined && child.children.length > 0) {
 			while (child.children!.length > 0) {
 				child = child.children!.at(-1)!
 			}

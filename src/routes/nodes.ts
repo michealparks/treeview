@@ -15,6 +15,7 @@ export const nodes = [
 			},
 			{
 				name: 'Goats',
+				selected: true,
 				children: [{ name: 'parkour.gif' }, { name: 'rampage.gif' }],
 			},
 			{ name: 'cat-roomba.gif' },

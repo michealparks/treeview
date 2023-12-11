@@ -66,8 +66,6 @@
     ${keys.nodeBgColor}:${$nodeBgColor};
     ${keys.toggleButtonBgColor}:${$togglButtonBgColor};
   `
-
-	onMount(() => select('bob'))
 </script>
 
 <div use:action />
