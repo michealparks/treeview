@@ -7,7 +7,8 @@ export const nodes = [
 		children: [
 			{
 				name: 'Dogs',
-				children: [{ name: 'treadmill.gif' }, { name: 'rope-jumping.gif' }],
+				href: '/node/dogs',
+				children: [{ name: 'treadmill.gif', href: '/node/treadmill' }, { name: 'rope-jumping.gif' }],
 			},
 			{
 				name: 'Bob',
@@ -133,10 +134,5 @@ traverse(nodes, (node) => {
 		viewBox: '0 0 24 24',
 	}
 	node.expanded = true
-
-	if (node.name === 'Bob') {
-		node.id = 'bob'
-	} else {
-		node.id = nanoid()
-	}	
+	node.id = node.name === 'Bob' ? 'bob' : nanoid()
 })

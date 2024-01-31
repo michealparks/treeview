@@ -20,6 +20,7 @@ export interface TreeNodeInternal {
 	name: string
 	parent: TreeNodeInternal | null
 	children: TreeNodeInternal[]
+	href?: string
 	expanded?: boolean
 	selected?: boolean
 	icon?: TreeNodeIcon
@@ -28,6 +29,7 @@ export interface TreeNodeInternal {
 export type TreeNode = {
 	id: string
 	name: string
+	href?: string
 	children?: TreeNode[]
 	expanded?: boolean
 	selected?: boolean
