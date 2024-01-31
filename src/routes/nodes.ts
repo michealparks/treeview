@@ -7,8 +7,8 @@ export const nodes = [
 		children: [
 			{
 				name: 'Dogs',
-				href: '/node/dogs',
-				children: [{ name: 'treadmill.gif', href: '/node/treadmill' }, { name: 'rope-jumping.gif' }],
+				href: '#dogs',
+				children: [{ name: 'treadmill.gif', href: '#treadmill' }, { name: 'rope-jumping.gif' }],
 			},
 			{
 				name: 'Bob',
