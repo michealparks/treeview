@@ -46,7 +46,7 @@
 					{@html icon}
 				{:else if 'path' in icon}
 					<svg
-						class="tv-h-[var(--treeview-icon-size,0.75rem)] tv-w-[var(--treeview-icon-size,0.75rem)]"
+						class="tv-h-[var(--treeview-icon-size,0.75rem)] tv-w-[var(--treeview-icon-size,0.75rem)] tv-fill-[var(--treeview-icon-color,#555)]"
 						viewBox={icon.viewBox}
 					>
 						<path d={icon.path} />
