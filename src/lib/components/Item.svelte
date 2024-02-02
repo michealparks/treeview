@@ -46,10 +46,10 @@
 					{@html icon}
 				{:else if 'path' in icon}
 					<svg
-						class="tv-h-[var(--treeview-icon-size,0.75rem)] tv-w-[var(--treeview-icon-size,0.75rem)] tv-fill-[var(--treeview-icon-color,#555)]"
+						class="tv-h-[var(--treeview-icon-size,0.75rem)] tv-w-[var(--treeview-icon-size,0.75rem)]"
 						viewBox={icon.viewBox}
 					>
-						<path d={icon.path} />
+						<path d={icon.path} class='tv-fill-[var(--treeview-icon-color,#555)]' />
 					</svg>
 				{:else if 'url' in icon}
 					<img

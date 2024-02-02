@@ -85,6 +85,7 @@
 <style>
 	:global(body) {
 		font-family: system-ui;
+		font-size: 14px;
 	}
 
 	main {
