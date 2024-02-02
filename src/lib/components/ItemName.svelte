@@ -13,18 +13,22 @@
 	$: if (active) ref?.focus()
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <svelte:element
 	this={node.href ? 'a' : 'button'}
 	bind:this={ref}
 	href={node.href}
 	style='font-size:inherit;'
-	class={cx({
-		'text-inherit no-underline': true,
-		'!text-[var(--treeview-node-active-text-color,#fff)] !bg-[var(--treeview-node-active-bg-color,#222)]': active,
-		'name h-5 m-0 py-0 px-2 rounded-[var(--treeview-button-border-radius,2px)] border-0 whitespace-nowrap outline-none bg-[var(--treeview-node-bg-color,#eee)]': true,
-		'hover:text-[var(--treeview-node-hovered-text-color,#fff)] hover:bg-[var(--treeview-node-hovered-bg-color,#666)]': true,
-		'focus-within:text-[var(--treeview-node-hovered-text-color,#fff)] focus-within:bg-[var(--treeview-node-hovered-bg-color,#666)]': true,
-	})}
+	class={cx(
+		'tv-h-5 tv-m-0 tv-py-0 tv-px-2 tv-border-0 tv-rounded-[var(--treeview-button-border-radius,2px)]',
+		'tv-text-inherit tv-no-underline',
+		'tv-whitespace-nowrap tv-outline-none tv-bg-[var(--treeview-node-bg-color,#eee)]',
+		'tv-hover:text-[var(--treeview-node-hovered-text-color,#fff)] tv-hover:bg-[var(--treeview-node-hovered-bg-color,#666)]',
+		'tv-focus-within:text-[var(--treeview-node-hovered-text-color,#fff)] tv-focus-within:bg-[var(--treeview-node-hovered-bg-color,#666)]',
+		{
+			'!tv-text-[var(--treeview-node-active-text-color,#fff)] !tv-bg-[var(--treeview-node-active-bg-color,#222)]': active,
+		}
+	)}
 	on:click={() => selectedNode.set(node)}
 	on:pointerdown={(event) => {
 		dragNode.set(node)

@@ -132,7 +132,7 @@
 <ul
 	role="tree"
 	tabindex="0"
-  class='list-none p-0 m-0 flex flex-col gap-1 outline-none'
+  class='tv-list-none tv-p-0 tv-m-0 tv-flex tv-flex-col tv-gap-1 tv-outline-none'
 	on:keydown={handleKey}
 	on:pointermove={$dragNode ? handleDrag : undefined}
 	{...$$restProps}

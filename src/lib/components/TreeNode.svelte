@@ -21,7 +21,7 @@
 <Item {node} {expanded} {active} onToggle={toggle} />
 
 {#if node.children.length > 0 && expanded}
-	<ul class="flex flex-col gap-1 pl-4 list-none m-[var(--treeview-list-margin,0)]">
+	<ul class="tv-flex tv-flex-col tv-gap-1 tv-pl-4 tv-list-none tv-m-[var(--treeview-list-margin,0)]">
 		{#each node.children as child (child.id)}
 			<svelte:self node={child} />
 		{/each}

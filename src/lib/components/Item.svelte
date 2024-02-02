@@ -22,12 +22,15 @@
 </script>
 
 <li bind:this={ref} role="treeitem" aria-selected={active}>
-	<div class="relative flex items-center gap-[var(--treeview-node-gap,0.25rem)]">
+	<div class="tv-relative tv-flex tv-items-center tv-gap-[var(--treeview-node-gap,0.25rem)]">
 		{#if node.children.length > 0}
 			<ToggleButton {expanded} {onToggle} />
 		{:else}
 			<div
-				class="h-[var(--treeview-toggle-button-size,1.25rem)] w-[var(--treeview-toggle-button-size,1.25rem)]"
+				class="
+					tv-h-[var(--treeview-toggle-button-size,1.25rem)]
+					tv-w-[var(--treeview-toggle-button-size,1.25rem)]
+				"
 			/>
 		{/if}
 
@@ -35,7 +38,7 @@
 			{@const { icon } = node}
 			<div
 				class={cx(
-					'grid place-content-center h-5 w-5 bg-[rgba(0,0,0,0.1)] rounded-full',
+					'tv-grid tv-place-content-center tv-h-5 tv-w-5 tv-bg-[rgba(0,0,0,0.1)] tv-rounded-full',
 					typeof icon === 'object' && 'class' in icon ? icon.class : '',
 				)}
 			>
@@ -43,14 +46,14 @@
 					{@html icon}
 				{:else if 'path' in icon}
 					<svg
-						class="h-[var(--treeview-icon-size,0.75rem)] w-[var(--treeview-icon-size,0.75rem)]"
+						class="tv-h-[var(--treeview-icon-size,0.75rem)] tv-w-[var(--treeview-icon-size,0.75rem)]"
 						viewBox={icon.viewBox}
 					>
 						<path d={icon.path} />
 					</svg>
 				{:else if 'url' in icon}
 					<img
-						class="h-[var(--treeview-icon-size,0.75rem)] w-[var(--treeview-icon-size,0.75rem)]"
+						class="tv-h-[var(--treeview-icon-size,0.75rem)] tv-w-[var(--treeview-icon-size,0.75rem)]"
 						src={icon.url}
 						alt=""
 					/>
