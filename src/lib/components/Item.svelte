@@ -38,7 +38,7 @@
 			{@const { icon } = node}
 			<div
 				class={cx(
-					'tv-grid tv-place-content-center tv-h-5 tv-w-5 tv-bg-[rgba(0,0,0,0.1)] tv-rounded-full',
+					'tv-grid tv-place-content-center tv-h-5 tv-w-5 tv-bg-[var(--treeview-icon-bg-color,rgba(0,0,0,0.1))] tv-rounded-full',
 					typeof icon === 'object' && 'class' in icon ? icon.class : '',
 				)}
 			>
