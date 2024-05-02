@@ -3,7 +3,7 @@
 	import type { TreeNodeInternal } from '../internal/node'
 	import ItemName from './ItemName.svelte'
 	import ToggleButton from './ToggleButton.svelte'
-	import { cx } from '../internal/classnames'
+	import Icon from './Icon.svelte'
 	import { getTreeContext } from '../internal/context'
 
 	export let node: TreeNodeInternal
@@ -21,46 +21,34 @@
 	})
 </script>
 
-<li bind:this={ref} role="treeitem" aria-selected={active}>
-	<div class="tv-relative tv-flex tv-items-center tv-gap-[var(--treeview-node-gap,0.25rem)]">
-		{#if node.children.length > 0}
-			<ToggleButton {expanded} {onToggle} />
-		{:else}
-			<div
-				class="
-					tv-h-[var(--treeview-toggle-button-size,1.25rem)]
-					tv-w-[var(--treeview-toggle-button-size,1.25rem)]
-				"
-			/>
-		{/if}
+<li
+	bind:this={ref}
+	role="treeitem"
+	aria-selected={active}
+>
+	<div>
+		<ToggleButton
+			enabled={node.children.length > 0}
+			{expanded}
+			{onToggle}
+		/>
 
 		{#if node.icon !== undefined}
-			{@const { icon } = node}
-			<div
-				class={cx(
-					'tv-grid tv-place-content-center tv-h-5 tv-w-5 tv-bg-[var(--treeview-icon-bg-color,rgba(0,0,0,0.1))] tv-rounded-full',
-					typeof icon === 'object' && 'class' in icon ? icon.class : '',
-				)}
-			>
-				{#if typeof icon === 'string'}
-					{@html icon}
-				{:else if 'path' in icon}
-					<svg
-						class="tv-h-[var(--treeview-icon-size,0.75rem)] tv-w-[var(--treeview-icon-size,0.75rem)]"
-						viewBox={icon.viewBox}
-					>
-						<path d={icon.path} class='tv-fill-[var(--treeview-icon-color,#555)]' />
-					</svg>
-				{:else if 'url' in icon}
-					<img
-						class="tv-h-[var(--treeview-icon-size,0.75rem)] tv-w-[var(--treeview-icon-size,0.75rem)]"
-						src={icon.url}
-						alt=""
-					/>
-				{/if}
-			</div>
+			<Icon icon={node.icon} />
 		{/if}
 
-		<ItemName {node} {active} />
+		<ItemName
+			{node}
+			{active}
+		/>
 	</div>
 </li>
+
+<style>
+	div {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: var(--treeview-node-gap, 0.25rem);
+	}
+</style>

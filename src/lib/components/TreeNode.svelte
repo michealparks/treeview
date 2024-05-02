@@ -21,9 +21,22 @@
 <Item {node} {expanded} {active} onToggle={toggle} />
 
 {#if node.children.length > 0 && expanded}
-	<ul class="tv-flex tv-flex-col tv-gap-1 tv-pl-4 tv-list-none tv-m-[var(--treeview-list-margin,0)]">
+	<ul>
 		{#each node.children as child (child.id)}
 			<svelte:self node={child} />
 		{/each}
 	</ul>
 {/if}
+
+<style>
+	ul {
+		display: flex;
+		flex-direction: column;
+		gap: var(--treeview-list-gap, 0.25rem);
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+	}
+</style>

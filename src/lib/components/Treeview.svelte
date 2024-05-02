@@ -24,16 +24,16 @@
 
 	createTreeContext()
 
-  const handleKeyBinding = useKeybinding()
+	const handleKeyBinding = useKeybinding()
 
 	const { selectedNode, toggledNode, dragNode, dragMap, dragging, pointerDown } = getTreeContext()
 
 	let lastSelected: TreeNodeInternal | undefined
 
 	const handleKey = (event: KeyboardEvent) => {
-    event.preventDefault()
-    const nextNodes = handleKeyBinding(event.key.toLowerCase(), $nodesInternal)
-    if (nextNodes) nodesInternal.set(nextNodes)
+		event.preventDefault()
+		const nextNodes = handleKeyBinding(event.key.toLowerCase(), $nodesInternal)
+		if (nextNodes) nodesInternal.set(nextNodes)
 	}
 
 	let dragTarget:
@@ -47,7 +47,7 @@
 		const distance = Math.hypot(event.clientX - $pointerDown.x, event.clientY - $pointerDown.y)
 
 		if (distance < 8) return
-	
+
 		dragging.set(true)
 
 		let target = event.target as HTMLElement
@@ -62,7 +62,6 @@
 	}
 
 	const handleDragEnd = () => {
-
 		const node = $dragNode!
 		dragNode.set(undefined)
 
@@ -73,8 +72,8 @@
 		const oldParent = node.parent
 		const newParent = dragTarget.node
 
-    // New parent cannot be self
-    if (node === newParent) return
+		// New parent cannot be self
+		if (node === newParent) return
 
 		// New parent cannot be a child of dragged node
 		let isParentChild = false
@@ -122,17 +121,14 @@
 		}
 	}
 
-	$: document.body.classList.toggle('!cursor-grabbing', $dragNode !== undefined)
+	$: document.body.classList.toggle('!tv-cursor-grabbing', $dragNode !== undefined)
 </script>
 
-<svelte:window
-	on:pointerup={handleDragEnd}
-/>
+<svelte:window on:pointerup={handleDragEnd} />
 
 <ul
 	role="tree"
 	tabindex="0"
-  class='tv-list-none tv-p-0 tv-m-0 tv-flex tv-flex-col tv-gap-1 tv-outline-none'
 	on:keydown={handleKey}
 	on:pointermove={$dragNode ? handleDrag : undefined}
 	{...$$restProps}
@@ -141,3 +137,16 @@
 		<TreeNodeComponent {node} on:toggle />
 	{/each}
 </ul>
+
+<style>
+	ul {
+		display: flex;
+		flex-direction: column;
+		gap: var(--treeview-list-gap, 0.25rem);
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+	}
+</style>
