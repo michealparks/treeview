@@ -121,7 +121,9 @@
 		}
 	}
 
-	$: document.body.classList.toggle('!tv-cursor-grabbing', $dragNode !== undefined)
+	$: if (typeof document !== 'undefined') {
+		document.body.classList.toggle('!tv-cursor-grabbing', $dragNode !== undefined)
+	}
 </script>
 
 <svelte:window on:pointerup={handleDragEnd} />
@@ -134,7 +136,10 @@
 	{...$$restProps}
 >
 	{#each $nodesInternal as node (node.id)}
-		<TreeNodeComponent {node} on:toggle />
+		<TreeNodeComponent
+			{node}
+			on:toggle
+		/>
 	{/each}
 </ul>
 

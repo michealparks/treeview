@@ -49,6 +49,6 @@
 		position: relative;
 		display: flex;
 		align-items: center;
-		gap: var(--treeview-node-gap, 0.25rem);
+		column-gap: var(--treeview-node-gap, 0.25rem);
 	}
 </style>

@@ -17,6 +17,9 @@
 			on:reparent={(event) => console.log('reparent', event)}
 			on:toggle={(event) => console.log('toggle', event)}
 		/>
+
+		<div id="dogs" />
+		<div id="treadmill" />
 	</main>
 </Pane>
 

@@ -18,7 +18,12 @@
 	$: active = $selectedNode === node
 </script>
 
-<Item {node} {expanded} {active} onToggle={toggle} />
+<Item
+	{node}
+	{expanded}
+	{active}
+	onToggle={toggle}
+/>
 
 {#if node.children.length > 0 && expanded}
 	<ul>
@@ -34,7 +39,7 @@
 		flex-direction: column;
 		gap: var(--treeview-list-gap, 0.25rem);
 		list-style-type: none;
-		padding: 0;
+		padding-left: var(--treeview-list-indent, 1.5rem);
 		margin: 0;
 		outline: 2px solid transparent;
 		outline-offset: 2px;

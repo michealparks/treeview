@@ -44,9 +44,8 @@
 <style>
 	a,
 	button {
-		height: var(--treeview-node-height, 1.25rem);
-		padding: var(--treeview-node-horizontal-padding, 0.5rem);
-		margin: 0;
+		padding: var(--treeview-node-horizontal-padding, 0.25rem);
+		margin: var(--treeview-node-margin, 0);
 		border: 0;
 		border-radius: var(--treeview-button-border-radius, 2px);
 		font-size: inherit;
